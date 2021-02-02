@@ -1,0 +1,68 @@
+import numpy as py
+
+
+# Function which creates an empty matrix of size n^2 by 2(3n-3) to hold all possible placements and constraints
+# Args: n = size of board
+def create_one_zero_matrix(n):
+    null_row = []
+    for i in range(2*(3*n-3)):
+        null_row.append(0)
+    one_zero = py.array([null_row])
+    for i in range(n**2 - 1):
+        one_zero = py.append(one_zero, [null_row], 0)
+    return one_zero
+
+
+# Function which populates the one-zero matrix according to all possible queen placements
+# Args: empty 1-0 matrix created by 'create_one_zero_matrix', n = size of board
+def populate_one_zero_matrix(one_zero_matrix, n):
+    counter = 0
+    # Iterate over the row indices, from (0,j) to (n,j)
+    for i in range(n):
+        # Set current x value
+        x = i
+        # Iterate over the column indices, from (i,0) to (i,n)
+        for k in range(n):
+            print("Iterate, ", counter)
+            # Define an emtpy row, with length equal to the number of constraints
+            current_row = []
+            for p in range(2 * (3 * n - 3)):
+                current_row.append(0)
+            # Set current y value
+            y = k
+            # Compute the diagonal and backward diagonal constraints
+            diag_constraint = (2*n - 1) + x + y
+            back_diag_constraint = 4*n - 4 + n - 1 - x + y
+            # Now populate the current row with 1's wherever constraints are satisfied
+            current_row[x] = 1
+            current_row[y + n] = 1
+            # Check to see if this is a significant diagonal
+            if (2 * n - 1) < diag_constraint < (3 * n):
+                current_row[diag_constraint] = 1
+            # Check to see if this is a significant backward diagonal
+            if (3*n + 1) < back_diag_constraint < (4*n + 2):
+                current_row[back_diag_constraint] = 1
+            one_zero_matrix[counter] = current_row
+            counter = counter + 1
+    return one_zero_matrix
+
+
+N = 4
+print("N = ", N)
+print("Creating empty 1-0 Matrix...")
+current_matrix = create_one_zero_matrix(N)
+print("Done.")
+print(current_matrix)
+print("Populating 1-0 Matrix...")
+populate_one_zero_matrix(current_matrix, N)
+print("Done.")
+print(current_matrix)
+
+#class Column:
+#    def __init__(self, left, right, up, down, size, name):
+#        self.left = left
+#        self.right = right
+#        self.up = up
+#        self.down = down
+#        self.size = size
+#        self.name = name
