@@ -5,12 +5,7 @@ import math
 # Function which creates an empty matrix of size n^2 by 2(3n-3) to hold all possible placements and constraints
 # Args: n = size of board
 def create_one_zero_matrix(n):
-    null_row = []
-    for i in range(2*(3*n-3)):
-        null_row.append(0)
-    one_zero = py.array([null_row])
-    for i in range(n**2 - 1):
-        one_zero = py.append(one_zero, [null_row], 0)
+    one_zero = py.zeros(((n**2), (2*(3*n-3))), dtype=int)
     return one_zero
 
 
@@ -24,7 +19,7 @@ def populate_one_zero_matrix(one_zero_matrix, n):
         x = i
         # Iterate over the column indices, from (i,0) to (i,n)
         for k in range(n):
-            print("Iterate, ", counter)
+            # print("Iterate, ", counter) DEBUG
             # Define an emtpy row, with length equal to the number of constraints
             current_row = []
             for p in range(2 * (3 * n - 3)):
@@ -33,12 +28,12 @@ def populate_one_zero_matrix(one_zero_matrix, n):
             y = k
             # Compute the diagonal and backward diagonal constraints
             diag_constraint = (2*n - 1) + x + y
-            back_diag_constraint = 5*n - 4 - 1 - x + y
+            back_diag_constraint = 5*n - 5 - x + y
             # Now populate the current row with 1's wherever constraints are satisfied
             current_row[x] = 1
             current_row[y + n] = 1
             # Check to see if this is a significant diagonal
-            if (2 * n - 1) < diag_constraint <= (4*n - 4):
+            if (2 * n - 1) < diag_constraint < (4*n - 3):
                 current_row[diag_constraint] = 1
             # Check to see if this is a significant backward diagonal
             if (4*n - 3) <= back_diag_constraint < (6*n - 6):
@@ -56,6 +51,7 @@ class Column:
         self.down = None
         self.size = 0
         self.name = None
+        self.primary = True
 
 
 class Node:
@@ -64,14 +60,15 @@ class Node:
         self.right = None
         self.up = None
         self.down = None
+        self.column = None
 
 
 class CircularList:
     def __init__(self, master_node=Column()):
         self.master_node = master_node
+        self.solution_list = []
         master_node.name = "Master"
-        master_node.right = None
-        master_node.left = master_node
+        master_node.size = 10000000000000
 
     def find_column_by_name(self, name):
         current_node = self.master_node
@@ -87,81 +84,198 @@ class CircularList:
             current_column = current_column.right
         return current_column
 
+    def transform_n_queen(self, n):
+        current_column = self.master_node
+        for i in range(2 * (3 * n - 3)):
+            current_column = current_column.right
+            if i < n:
+                current_column.name = "Row {0}".format(i + 1)
+            elif i < 2*n:
+                current_column.name = "File {0}".format(int((i % n) + 1))
+            elif i < (4*n - 3):
+                current_column.name = "Diagonal {0}".format(int((i % (2*n)) + 1))
+                current_column.primary = False
+            else:
+                current_column.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
+                current_column.primary = False
+        return None
+
+    def set_solution_k(self, new_node, k):
+        try:
+            self.solution_list[k] = new_node
+        except:
+            self.solution_list.append(new_node)
+
+    def print(self):
+        current_header = self.master_node.right
+        while current_header != self.master_node:
+            print(current_header.name, current_header.size)
+            current_header = current_header.right
+
+    def print_solution(self):
+        print("Solution")
+        for i in range(len(self.solution_list)):
+            print(self.solution_list[i].column.name, self.solution_list[i].right.column.name)
+        print("End Solution")
+
     def convert_one_zero(self, matrix):
         dims = py.shape(matrix)
-        x = dims[0]
-        y = dims[1]
+        x = dims[0]  # Number rows
+        y = dims[1]  # Number columns
         print("x: ", x)
         print("y: ", y)
-        n = math.sqrt(x)
         # Create the column headers
+        previous_header = self.master_node
         for i in range(y):
-            current_node = self.master_node
-            while current_node.right is not None:
-                current_node = current_node.right
-            new = Column()
-            if i < n:
-                new.name = "Row {0}".format(i + 1)
-            elif i < 2*n:
-                new.name = "File {0}".format(int((i % n) + 1))
-            elif i < (4*n - 3):
-                new.name = "Diagonal {0}".format(int((i % (2*n)) + 1))
-            else:
-                new.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
-            new.left = current_node
-            current_node.right = new
+            new = Column()  # Initialise new column header
+            new.name = "Constraint {0}".format(i)  # Generic name
+            # Connect to the previous header on the left
+            new.left = previous_header
+            previous_header.right = new
+            # Connect on the right to the master node.
+            new.right = self.master_node  # Note: This will be overwritten for each iteration i, except the last
+            self.master_node.left = new
+            # Update pointer for next iteration
+            previous_header = new
         # Create each row
         for i in range(x):
             # Extract corresponding row from 1-0 Matrix
             current_row = matrix[i]
-            first_node = True  # Bad practice, can't think of a better solution right now
+            first_pass = True  # Bad practice, can't think of a better solution right now
             # Iterate over the extracted row
             for j in range(y):
                 # If significant
                 if current_row[j] == 1:
                     new = Node()  # Create new node
-                    current_above = self.find_column_by_index(j+1)  # Find corresponding header for node
+                    # current_above = self.find_column_by_index(j + 1)  # Find corresponding header for node
+                    new.column = self.find_column_by_index(j + 1)  # Define column header for new node
+                    current_above = new.column
                     # Find 'lowest' node in the column
                     while current_above.down is not None:
                         current_above = current_above.down
-                    # Connect new node above, old lowest node below
+                    # Connect new.up to current_above.down
                     current_above.down = new
                     new.up = current_above
                     # If this is the first node, no previous node declared and no left connection available
-                    if first_node:
-                        prev_node = new  # Record this node for the next iteration
-                        first_node = False
+                    if first_pass:
+                        first_node = new
+                        first_node.left = first_node
+                        first_node.right = first_node
+                        prev_node = first_node  # Record this node for the next iteration
+                        first_pass = False
                     else:
                         # Connect new node on the left to the previous node in this row
                         new.left = prev_node
                         prev_node.right = new
+                        new.right = first_node
+                        first_node.left = new
                         prev_node = new
         # Finally join the edges of the lists
         # Start at the master node
-        current_header = self.master_node  # Current header will be used to traverse the chain horizontally
+        current_header = self.master_node.right  # Current header will be used to traverse the chain horizontally
         # Iterate right until we are at the last node
-        while current_header.right is not None:
+        while current_header != self.master_node:
             current_node = current_header  # Current node will be used to traverse the chain vertically
             # Iterate down until we are at the 'lowest' node
             while current_node.down is not None:
+                current_header.size = current_header.size + 1
                 current_node = current_node.down  # Step down
             # Join the 'lowest' node and the header, above and below
             current_node.down = current_header
             current_header.up = current_node
             current_header = current_header.right  # Step right
-        # Do one final iteration of the loop, for the furthest right header
-        # Bad practice!
-        current_node = current_header  # Current node will be used to traverse the chain vertically
-        # Iterate down until we are at the 'lowest' node
-        while current_node.down is not None:
-            current_node = current_node.down  # Step down
-        # Join the 'lowest' node and the header, above and below
-        current_node.down = current_header
-        current_header.up = current_node
-        # Join the furthest right header to the master and vice versa
-        current_header.right = self.master_node
-        self.master_node.left = current_header
         return self.master_node
+
+    def cover_column(self, column):
+        # print("cover Column ", column.name)
+        # Remove column header from the header chain
+        column.left.right = column.right  # Alter link to the left
+        column.right.left = column.left  # Alter link to the right
+        # Iterate down through the column
+        current_node = column.down
+        while current_node != column:
+            # Iterate right across the row
+            current_right = current_node.right
+            while current_right != current_node:
+                current_below = current_right.down
+                current_above = current_right.up
+                current_below.up = current_above  # Alter link below
+                current_above.down = current_below  # Alter link above
+                current_right.column.size = current_right.column.size - 1  # Alter column size
+                current_right = current_right.right  # Step right
+            current_node = current_node.down  # Step down
+        return None
+
+    def uncover_column(self, column):
+        # print("Uncover Column ", column.name)
+        current_node = column.up
+        while current_node != column:
+            current_left = current_node.left
+            while current_left != current_node:
+                # print("Column", current_left.column.name, current_left.column.size)
+                current_left.column.size = current_left.column.size + 1
+                current_below = current_left.down
+                current_above = current_left.up
+                current_below.up = current_left  # Restore link below
+                current_above.down = current_left  # Restore link above
+                current_left = current_left.left  # Step left
+            current_node = current_node.up  # Step up
+        # Add column to the header chain
+        column.left.right = column
+        column.right.left = column
+        return None
+
+    def find_best_column(self):
+        current_header = self.master_node.right
+        best_header = self.master_node
+        while current_header.right != self.master_node:
+            if 0 < current_header.size < best_header.size:
+                if current_header.primary:
+                    best_header = current_header
+            current_header = current_header.right
+        return best_header
+
+    def dlx(self, k):
+        print("Starting algorithm DLX. k=", k)
+        #self.print()
+        # self.print_solution()
+        if not self.master_node.right.primary:
+            print("O frabjous day! Callooh! Callay!")
+            self.print_solution()
+            return None
+            # Print Solution
+        else:
+            # Choose the column with the smallest size, but size greater than 0
+            current_column = self.master_node.right
+            # current_column = self.find_best_column()
+            if current_column.size <= 0:
+                print("Something went wrong, column size =", current_column.size)
+                self.print()
+                return None
+            # Best column now found
+            print("Best column found, ", current_column.name)
+            # Branch now for each row in this column
+            current_node = current_column.down
+            self.cover_column(current_column)
+            while current_node != current_column:
+                self.set_solution_k(current_node, k)
+                current_right = current_node.right
+                while current_right != current_node:
+                    # Cover column, current_right.column
+                    self.cover_column(current_right.column)
+                    current_right = current_right.right
+                # print("Recursive call")
+                self.dlx(k+1)
+                current_node = self.solution_list[k]
+                current_column = current_node.column
+                current_left = current_node.left
+                while current_left != current_node:
+                    # Uncover column dummy_node.column
+                    self.uncover_column(current_left.column)
+                    current_left = current_left.left
+                current_node = current_node.down
+            self.uncover_column(current_column)
+        return None
 
 
 N = 4
@@ -179,12 +293,20 @@ print(current_matrix)
 # TESTS
 test = CircularList()
 test.convert_one_zero(current_matrix)
-this_node = test.master_node
-while this_node.right != test.master_node:
-    this_node = this_node.right
-    below = this_node
+test.transform_n_queen(N)
+this_node = test.master_node.right
+while this_node != test.master_node:
+    below = this_node.down
     print(this_node.name)
-    while below.down != this_node:
+    while below != this_node:
+        counter = 0
+        right = below.right
+        while right != below:
+            counter = counter + 1
+            right = right.right
+        print(below, "Counter:", counter)
         below = below.down
-        print(below)
+    this_node = this_node.right
 
+# PRAY
+test.dlx(0)
