@@ -1,0 +1,999 @@
+Algorithm DLX
+This algorithm finds all solutions to an exact cover problem.
+An implementation of Donald Knuth's algorithm X, using dancing links, is used.
+For more information visit: https://github.com/Hedge-Hodge/Dancing_Links_N_Queens
+This file contains these solutions.
+
+The following matrix represents the exact cover problem in question:
+1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
+0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0
+0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0
+0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0
+0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 0
+0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0
+0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0
+Here we have the classic N-Queens exact cover problem, with:
+N = 8
+The columns of the matrix above correspond to the row, column and diagonal constraints.
+While the rows correspond to possible queen placements.
+
+
+Solutions:
+
+Solution 1
+Row 1, File 1
+Row 2, File 5
+Row 3, File 8
+Row 4, File 6
+Row 7, File 2
+Row 5, File 3
+Row 6, File 7
+Row 8, File 4
+
+Solution 2
+Row 1, File 1
+Row 2, File 6
+Row 3, File 8
+Row 4, File 3
+Row 5, File 7
+Row 6, File 4
+Row 7, File 2
+Row 8, File 5
+
+Solution 3
+Row 1, File 1
+Row 2, File 7
+Row 3, File 4
+Row 5, File 8
+Row 4, File 6
+Row 7, File 5
+Row 6, File 2
+Row 8, File 3
+
+Solution 4
+Row 1, File 1
+Row 2, File 7
+Row 3, File 5
+Row 6, File 4
+Row 8, File 3
+Row 4, File 8
+Row 5, File 2
+Row 7, File 6
+
+Solution 5
+Row 1, File 2
+Row 2, File 4
+Row 5, File 3
+Row 7, File 7
+File 6, Diagonal 7
+Row 8, File 5
+Row 4, File 8
+Row 6, File 1
+
+Solution 6
+Row 1, File 2
+Row 2, File 5
+Row 3, File 7
+Row 4, File 1
+Row 7, File 6
+Row 5, File 3
+Row 6, File 8
+Row 8, File 4
+
+Solution 7
+Row 1, File 2
+Row 2, File 5
+Row 3, File 7
+Row 4, File 4
+Row 5, File 1
+Row 7, File 6
+Row 8, File 3
+Row 6, File 8
+
+Solution 8
+Row 1, File 2
+Row 2, File 6
+Row 3, File 1
+Row 4, File 7
+Row 7, File 3
+Row 5, File 4
+Row 6, File 8
+Row 8, File 5
+
+Solution 9
+Row 1, File 2
+Row 2, File 6
+Row 3, File 8
+Row 4, File 3
+Row 6, File 4
+Row 7, File 7
+Row 5, File 1
+Row 8, File 5
+
+Solution 10
+Row 1, File 2
+Row 2, File 7
+Row 3, File 3
+Row 5, File 8
+Row 4, File 6
+Row 8, File 4
+Row 7, File 1
+Row 6, File 5
+
+Solution 11
+Row 1, File 2
+Row 2, File 7
+Row 3, File 5
+Row 5, File 1
+Row 4, File 8
+Row 6, File 4
+Row 7, File 6
+Row 8, File 3
+
+Solution 12
+Row 1, File 2
+Row 2, File 8
+Row 3, File 6
+Row 6, File 5
+Row 8, File 4
+Row 4, File 1
+Row 5, File 3
+Row 7, File 7
+
+Solution 13
+Row 1, File 3
+Row 2, File 1
+Row 3, File 7
+Row 6, File 2
+Row 4, File 5
+Row 5, File 8
+Row 7, File 4
+Row 8, File 6
+
+Solution 14
+Row 1, File 3
+Row 2, File 5
+Row 3, File 2
+Row 4, File 8
+Row 5, File 1
+Row 8, File 6
+Row 6, File 7
+Row 7, File 4
+
+Solution 15
+Row 1, File 3
+Row 2, File 5
+Row 3, File 2
+Row 4, File 8
+Row 5, File 6
+Row 6, File 4
+Row 8, File 1
+Row 7, File 7
+
+Solution 16
+Row 1, File 3
+Row 2, File 5
+Row 3, File 7
+Row 6, File 2
+Row 4, File 1
+File 4, Diagonal 7
+Row 7, File 8
+Row 8, File 6
+
+Solution 17
+Row 1, File 3
+Row 2, File 5
+Row 3, File 8
+Row 5, File 1
+Row 4, File 4
+Row 6, File 7
+Row 7, File 2
+Row 8, File 6
+
+Solution 18
+Row 1, File 3
+Row 2, File 6
+Row 3, File 2
+Row 4, File 5
+File 7, Diagonal 12
+Row 8, File 4
+Row 5, File 8
+Row 6, File 1
+
+Solution 19
+Row 1, File 3
+Row 2, File 6
+Row 3, File 2
+Row 4, File 7
+Row 5, File 1
+Row 6, File 4
+Row 7, File 8
+Row 8, File 5
+
+Solution 20
+Row 1, File 3
+Row 2, File 6
+Row 3, File 2
+Row 4, File 7
+Row 5, File 5
+Row 6, File 1
+Row 7, File 8
+Row 8, File 4
+
+Solution 21
+Row 1, File 3
+Row 2, File 6
+Row 3, File 4
+Row 6, File 5
+File 7, Diagonal 12
+File 8, Diagonal 11
+Row 4, File 1
+Row 8, File 2
+
+Solution 22
+Row 1, File 3
+Row 2, File 6
+Row 3, File 4
+Row 6, File 5
+File 7, Diagonal 12
+File 8, Diagonal 11
+Row 4, File 2
+Row 8, File 1
+
+Solution 23
+Row 1, File 3
+Row 2, File 6
+Row 3, File 8
+Row 4, File 1
+Row 5, File 4
+Row 6, File 7
+Row 7, File 5
+Row 8, File 2
+
+Solution 24
+Row 1, File 3
+Row 2, File 6
+Row 3, File 8
+Row 4, File 1
+Row 5, File 5
+Row 6, File 7
+Row 7, File 2
+Row 8, File 4
+
+Solution 25
+Row 1, File 3
+Row 2, File 6
+Row 3, File 8
+Row 4, File 2
+Row 7, File 7
+Row 5, File 4
+Row 6, File 1
+Row 8, File 5
+
+Solution 26
+Row 1, File 3
+Row 2, File 7
+Row 3, File 2
+Row 4, File 8
+Row 6, File 1
+Row 7, File 4
+Row 5, File 5
+Row 8, File 6
+
+Solution 27
+Row 1, File 3
+Row 2, File 7
+Row 3, File 2
+Row 4, File 8
+Row 6, File 4
+Row 7, File 1
+Row 5, File 6
+Row 8, File 5
+
+Solution 28
+Row 1, File 3
+Row 2, File 8
+Row 3, File 4
+Row 5, File 1
+Row 4, File 7
+Row 6, File 6
+Row 7, File 2
+Row 8, File 5
+
+Solution 29
+Row 1, File 4
+Row 2, File 1
+Row 3, File 5
+Row 4, File 8
+Row 5, File 2
+Row 6, File 7
+Row 7, File 3
+Row 8, File 6
+
+Solution 30
+Row 1, File 4
+Row 2, File 1
+Row 3, File 5
+Row 4, File 8
+Row 5, File 6
+Row 6, File 3
+Row 7, File 7
+Row 8, File 2
+
+Solution 31
+Row 1, File 4
+Row 2, File 2
+Row 3, File 5
+Row 4, File 8
+Row 5, File 6
+Row 7, File 3
+Row 6, File 1
+Row 8, File 7
+
+Solution 32
+Row 1, File 4
+Row 2, File 2
+Row 3, File 7
+Row 4, File 3
+Row 6, File 8
+File 6, Diagonal 9
+Row 7, File 1
+Row 8, File 5
+
+Solution 33
+Row 1, File 4
+Row 2, File 2
+Row 3, File 7
+Row 4, File 3
+Row 6, File 8
+File 6, Diagonal 9
+Row 7, File 5
+Row 8, File 1
+
+Solution 34
+Row 1, File 4
+Row 2, File 2
+Row 3, File 7
+Row 4, File 5
+File 8, Diagonal 12
+Row 8, File 3
+Row 5, File 1
+Row 7, File 6
+
+Solution 35
+Row 1, File 4
+Row 2, File 2
+Row 3, File 8
+Row 4, File 5
+Row 6, File 1
+Row 5, File 7
+Row 8, File 6
+Row 7, File 3
+
+Solution 36
+Row 1, File 4
+Row 2, File 2
+Row 3, File 8
+Row 4, File 6
+Row 5, File 1
+Row 7, File 5
+Row 8, File 7
+Row 6, File 3
+
+Solution 37
+Row 1, File 4
+Row 2, File 6
+Row 3, File 1
+Row 4, File 5
+Row 6, File 8
+Row 5, File 2
+Row 7, File 3
+Row 8, File 7
+
+Solution 38
+Row 1, File 4
+Row 2, File 6
+Row 3, File 8
+Row 4, File 2
+Row 5, File 7
+Row 7, File 3
+Row 6, File 1
+Row 8, File 5
+
+Solution 39
+Row 1, File 4
+Row 2, File 6
+Row 3, File 8
+Row 4, File 3
+Row 6, File 7
+Row 5, File 1
+Row 8, File 2
+Row 7, File 5
+
+Solution 40
+Row 1, File 4
+Row 2, File 7
+Row 3, File 1
+Row 4, File 8
+Row 6, File 2
+Row 7, File 6
+Row 5, File 5
+Row 8, File 3
+
+Solution 41
+Row 1, File 4
+Row 2, File 7
+Row 3, File 3
+Row 4, File 8
+Row 5, File 2
+Row 6, File 5
+Row 7, File 1
+Row 8, File 6
+
+Solution 42
+Row 1, File 4
+Row 2, File 7
+Row 3, File 5
+Row 6, File 1
+Row 5, File 6
+Row 7, File 3
+Row 8, File 8
+Row 4, File 2
+
+Solution 43
+Row 1, File 4
+Row 2, File 7
+Row 3, File 5
+Row 6, File 6
+File 1, Diagonal 4
+Row 4, File 3
+Row 7, File 8
+Row 8, File 2
+
+Solution 44
+Row 1, File 4
+Row 2, File 8
+Row 3, File 1
+Row 4, File 3
+Row 8, File 5
+Row 5, File 6
+Row 6, File 2
+Row 7, File 7
+
+Solution 45
+Row 1, File 4
+Row 2, File 8
+Row 3, File 1
+Row 4, File 5
+File 3, Diagonal 9
+Row 5, File 7
+Row 6, File 2
+Row 7, File 6
+
+Solution 46
+Row 1, File 4
+Row 2, File 8
+Row 3, File 5
+Row 4, File 3
+File 2, Diagonal 7
+Row 8, File 6
+Row 5, File 1
+Row 6, File 7
+
+Solution 47
+Row 1, File 5
+Row 2, File 1
+Row 3, File 4
+Row 4, File 6
+File 7, Diagonal 12
+Row 8, File 3
+Row 5, File 8
+Row 6, File 2
+
+Solution 48
+Row 1, File 5
+Row 2, File 1
+Row 3, File 8
+Row 4, File 4
+File 6, Diagonal 12
+Row 5, File 2
+Row 6, File 7
+Row 7, File 3
+
+Solution 49
+Row 1, File 5
+Row 2, File 1
+Row 3, File 8
+Row 4, File 6
+Row 8, File 4
+Row 5, File 3
+Row 6, File 7
+Row 7, File 2
+
+Solution 50
+Row 1, File 5
+Row 2, File 2
+Row 3, File 4
+Row 6, File 3
+File 1, Diagonal 6
+File 8, Diagonal 11
+Row 4, File 6
+Row 8, File 7
+
+Solution 51
+Row 1, File 5
+Row 2, File 2
+Row 3, File 4
+Row 6, File 8
+Row 5, File 3
+Row 7, File 6
+Row 8, File 1
+Row 4, File 7
+
+Solution 52
+Row 1, File 5
+Row 2, File 2
+Row 3, File 6
+Row 4, File 1
+Row 5, File 7
+Row 6, File 4
+Row 7, File 8
+Row 8, File 3
+
+Solution 53
+Row 1, File 5
+Row 2, File 2
+Row 3, File 8
+Row 4, File 1
+Row 6, File 7
+Row 7, File 3
+Row 5, File 4
+Row 8, File 6
+
+Solution 54
+Row 1, File 5
+Row 2, File 3
+Row 3, File 1
+Row 4, File 6
+Row 6, File 2
+Row 5, File 8
+Row 8, File 7
+Row 7, File 4
+
+Solution 55
+Row 1, File 5
+Row 2, File 3
+Row 3, File 1
+Row 4, File 7
+Row 5, File 2
+Row 7, File 6
+Row 6, File 8
+Row 8, File 4
+
+Solution 56
+Row 1, File 5
+Row 2, File 3
+Row 3, File 8
+Row 4, File 4
+Row 6, File 1
+Row 5, File 7
+Row 7, File 6
+Row 8, File 2
+
+Solution 57
+Row 1, File 5
+Row 2, File 7
+Row 3, File 1
+Row 4, File 3
+Row 5, File 8
+Row 7, File 4
+Row 8, File 2
+Row 6, File 6
+
+Solution 58
+Row 1, File 5
+Row 2, File 7
+Row 3, File 1
+Row 4, File 4
+Row 6, File 8
+Row 5, File 2
+Row 8, File 3
+Row 7, File 6
+
+Solution 59
+Row 1, File 5
+Row 2, File 7
+Row 3, File 2
+Row 4, File 4
+File 1, Diagonal 5
+Row 8, File 6
+Row 5, File 8
+Row 7, File 3
+
+Solution 60
+Row 1, File 5
+Row 2, File 7
+Row 3, File 2
+Row 4, File 6
+Row 6, File 1
+File 3, Diagonal 6
+Row 7, File 4
+Row 8, File 8
+
+Solution 61
+Row 1, File 5
+Row 2, File 7
+Row 3, File 2
+Row 4, File 6
+Row 6, File 1
+File 3, Diagonal 6
+Row 7, File 8
+Row 8, File 4
+
+Solution 62
+Row 1, File 5
+Row 2, File 7
+Row 3, File 4
+Row 4, File 1
+Row 5, File 3
+Row 7, File 6
+Row 6, File 8
+Row 8, File 2
+
+Solution 63
+Row 1, File 5
+Row 2, File 8
+Row 3, File 4
+Row 4, File 1
+Row 5, File 3
+Row 6, File 6
+Row 7, File 2
+Row 8, File 7
+
+Solution 64
+Row 1, File 5
+Row 2, File 8
+Row 3, File 4
+Row 4, File 1
+Row 5, File 7
+Row 6, File 2
+Row 7, File 6
+Row 8, File 3
+
+Solution 65
+Row 1, File 6
+Row 2, File 1
+Row 3, File 5
+Row 5, File 8
+Row 4, File 2
+Row 6, File 3
+Row 7, File 7
+Row 8, File 4
+
+Solution 66
+Row 1, File 6
+Row 2, File 2
+Row 3, File 7
+Row 4, File 1
+Row 6, File 5
+Row 7, File 8
+Row 5, File 3
+Row 8, File 4
+
+Solution 67
+Row 1, File 6
+Row 2, File 2
+Row 3, File 7
+Row 4, File 1
+Row 6, File 8
+Row 7, File 5
+Row 5, File 4
+Row 8, File 3
+
+Solution 68
+Row 1, File 6
+Row 2, File 3
+Row 3, File 1
+Row 4, File 7
+Row 7, File 2
+Row 5, File 5
+Row 6, File 8
+Row 8, File 4
+
+Solution 69
+Row 1, File 6
+Row 2, File 3
+Row 3, File 1
+Row 4, File 8
+Row 5, File 4
+Row 6, File 2
+Row 7, File 7
+Row 8, File 5
+
+Solution 70
+Row 1, File 6
+Row 2, File 3
+Row 3, File 1
+Row 4, File 8
+Row 5, File 5
+Row 6, File 2
+Row 7, File 4
+Row 8, File 7
+
+Solution 71
+Row 1, File 6
+Row 2, File 3
+Row 3, File 5
+Row 6, File 4
+File 2, Diagonal 7
+File 1, Diagonal 4
+Row 4, File 7
+Row 8, File 8
+
+Solution 72
+Row 1, File 6
+Row 2, File 3
+Row 3, File 5
+Row 6, File 4
+File 2, Diagonal 7
+File 1, Diagonal 4
+Row 4, File 8
+Row 8, File 7
+
+Solution 73
+Row 1, File 6
+Row 2, File 3
+Row 3, File 7
+Row 4, File 2
+Row 5, File 4
+Row 6, File 8
+Row 7, File 1
+Row 8, File 5
+
+Solution 74
+Row 1, File 6
+Row 2, File 3
+Row 3, File 7
+Row 4, File 2
+Row 5, File 8
+Row 6, File 5
+Row 7, File 1
+Row 8, File 4
+
+Solution 75
+Row 1, File 6
+Row 2, File 3
+Row 3, File 7
+Row 4, File 4
+File 2, Diagonal 7
+Row 8, File 5
+Row 5, File 1
+Row 6, File 8
+
+Solution 76
+Row 1, File 6
+Row 2, File 4
+Row 3, File 1
+Row 5, File 8
+Row 4, File 5
+Row 6, File 2
+Row 7, File 7
+Row 8, File 3
+
+Solution 77
+Row 1, File 6
+Row 2, File 4
+Row 3, File 2
+Row 6, File 7
+Row 4, File 8
+File 5, Diagonal 8
+Row 7, File 1
+Row 8, File 3
+
+Solution 78
+Row 1, File 6
+Row 2, File 4
+Row 3, File 7
+Row 4, File 1
+Row 5, File 3
+Row 6, File 5
+Row 8, File 8
+Row 7, File 2
+
+Solution 79
+Row 1, File 6
+Row 2, File 4
+Row 3, File 7
+Row 4, File 1
+Row 5, File 8
+Row 8, File 3
+Row 6, File 2
+Row 7, File 5
+
+Solution 80
+Row 1, File 6
+Row 2, File 8
+Row 3, File 2
+Row 6, File 7
+Row 4, File 4
+Row 5, File 1
+Row 7, File 5
+Row 8, File 3
+
+Solution 81
+Row 1, File 7
+Row 2, File 1
+Row 3, File 3
+Row 6, File 4
+Row 8, File 5
+Row 4, File 8
+Row 5, File 6
+Row 7, File 2
+
+Solution 82
+Row 1, File 7
+Row 2, File 2
+Row 3, File 4
+Row 5, File 8
+Row 4, File 1
+Row 6, File 5
+Row 7, File 3
+Row 8, File 6
+
+Solution 83
+Row 1, File 7
+Row 2, File 2
+Row 3, File 6
+Row 5, File 1
+Row 4, File 3
+Row 8, File 5
+Row 7, File 8
+Row 6, File 4
+
+Solution 84
+Row 1, File 7
+Row 2, File 3
+Row 3, File 1
+Row 4, File 6
+Row 6, File 5
+Row 7, File 2
+Row 5, File 8
+Row 8, File 4
+
+Solution 85
+Row 1, File 7
+Row 2, File 3
+Row 3, File 8
+Row 4, File 2
+Row 7, File 6
+Row 5, File 5
+Row 6, File 1
+Row 8, File 4
+
+Solution 86
+Row 1, File 7
+Row 2, File 4
+Row 3, File 2
+Row 4, File 5
+Row 5, File 8
+Row 7, File 3
+Row 8, File 6
+Row 6, File 1
+
+Solution 87
+Row 1, File 7
+Row 2, File 4
+Row 3, File 2
+Row 4, File 8
+Row 7, File 3
+Row 5, File 6
+Row 6, File 1
+Row 8, File 5
+
+Solution 88
+Row 1, File 7
+Row 2, File 5
+Row 5, File 6
+Row 7, File 2
+File 3, Diagonal 4
+Row 8, File 4
+Row 4, File 1
+Row 6, File 8
+
+Solution 89
+Row 1, File 8
+Row 2, File 2
+Row 3, File 4
+Row 6, File 5
+Row 8, File 6
+Row 4, File 1
+Row 5, File 7
+Row 7, File 3
+
+Solution 90
+Row 1, File 8
+Row 2, File 2
+Row 3, File 5
+Row 5, File 1
+Row 4, File 3
+Row 7, File 4
+Row 6, File 7
+Row 8, File 6
+
+Solution 91
+Row 1, File 8
+Row 2, File 3
+Row 3, File 1
+Row 4, File 6
+Row 5, File 2
+Row 6, File 5
+Row 7, File 7
+Row 8, File 4
+
+Solution 92
+Row 1, File 8
+Row 2, File 4
+Row 3, File 1
+Row 4, File 3
+Row 7, File 7
+Row 5, File 6
+Row 6, File 2
+Row 8, File 5
+

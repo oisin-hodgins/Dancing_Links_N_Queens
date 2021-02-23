@@ -1,4 +1,5 @@
 import numpy as py
+import os
 import math
 
 
@@ -67,8 +68,10 @@ class CircularList:
     def __init__(self, master_node=Column()):
         self.master_node = master_node
         self.solution_list = []
+        self.total_solutions = 0
         master_node.name = "Master"
         master_node.size = 10000000000000
+        self.file_write_initial()
 
     def find_column_by_name(self, name):
         current_node = self.master_node
@@ -98,6 +101,7 @@ class CircularList:
             else:
                 current_column.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
                 current_column.primary = False
+        self.file_write_n_queen(n)
         return None
 
     def set_solution_k(self, new_node, k):
@@ -113,12 +117,58 @@ class CircularList:
             current_header = current_header.right
 
     def print_solution(self):
+        self.total_solutions = self.total_solutions + 1
         print("Solution")
         for i in range(len(self.solution_list)):
             print(self.solution_list[i].column.name, self.solution_list[i].right.column.name)
         print("End Solution")
 
+    def file_write_initial(self):
+        try:
+            solution_file = open("main_output.txt", "w")
+        except:
+            os.remove("myfile.txt")
+            solution_file = open("main_output.txt", "w")
+        solution_file.write("Algorithm DLX\n")
+        solution_file.write("This algorithm finds all solutions to an exact cover problem.\n")
+        solution_file.write("An implementation of Donald Knuth's algorithm X, using dancing links, is used.\n")
+        solution_file.write("For more information visit: https://github.com/Hedge-Hodge/Dancing_Links_N_Queens\n")
+        solution_file.write("This file contains these solutions.\n")
+        solution_file.close()
+        return None
+
+    def file_write_n_queen(self, n):
+        solution_file = open("main_output.txt", "a")
+        solution_file.write("Here we have the classic N-Queens exact cover problem, with:\n")
+        solution_file.write("N = {0}\n".format(n))
+        solution_file.write("The columns of the matrix above correspond to the row, column and diagonal constraints.\n")
+        solution_file.write("While the rows correspond to possible queen placements.\n")
+        solution_file.close()
+        return None
+
+    def file_write_one_zero(self, matrix):
+        solution_file = open("main_output.txt", "a")
+        solution_file.write("\nThe following matrix represents the exact cover problem in question:\n")
+        py.savetxt(solution_file, matrix, delimiter=' ', fmt='%i')
+        solution_file.close()
+        return None
+
+    def file_write_solution(self):
+        solution_file = open("main_output.txt", "a")
+        if self.total_solutions == 1:
+            solution_file.write("\n\nSolutions:\n\n")
+        solution_file.write("Solution {0}\n".format(self.total_solutions))
+        for i in range(len(self.solution_list)):
+            solution_file.write(self.solution_list[i].column.name)
+            solution_file.write(", ")
+            solution_file.write(self.solution_list[i].right.column.name)
+            solution_file.write("\n")
+        solution_file.write("\n")
+        solution_file.close()
+        return None
+
     def convert_one_zero(self, matrix):
+        self.file_write_one_zero(matrix)
         dims = py.shape(matrix)
         x = dims[0]  # Number rows
         y = dims[1]  # Number columns
@@ -228,30 +278,39 @@ class CircularList:
     def find_best_column(self):
         current_header = self.master_node.right
         best_header = self.master_node
-        while current_header.right != self.master_node:
-            if 0 < current_header.size < best_header.size:
-                if current_header.primary:
-                    best_header = current_header
+        while current_header != self.master_node:
+            if current_header.size < best_header.size and current_header.primary:
+                best_header = current_header
             current_header = current_header.right
         return best_header
+
+    def dead_constraint(self):
+        current_header = self.master_node.right
+        while current_header != self.master_node:
+            if current_header.primary and current_header.size <= 0:
+                return True
+            current_header = current_header.right
+        return False
 
     def dlx(self, k):
         print("Starting algorithm DLX. k=", k)
         #self.print()
-        # self.print_solution()
+        #self.print_solution()
         if not self.master_node.right.primary:
             print("O frabjous day! Callooh! Callay!")
             self.print_solution()
+            self.file_write_solution()
             return None
-            # Print Solution
         else:
             # Choose the column with the smallest size, but size greater than 0
-            current_column = self.master_node.right
-            # current_column = self.find_best_column()
-            if current_column.size <= 0:
-                print("Something went wrong, column size =", current_column.size)
-                self.print()
+            if self.dead_constraint():
+                print("Dead constraint")
                 return None
+            current_column = self.find_best_column()
+            #if current_column.size <= 0:
+            #    print("Something went wrong, column size =", current_column.size)
+            #    self.print()
+            #    return None
             # Best column now found
             print("Best column found, ", current_column.name)
             # Branch now for each row in this column
@@ -278,7 +337,7 @@ class CircularList:
         return None
 
 
-N = 4
+N = 8
 print("N = ", N)
 print("Creating empty 1-0 Matrix...")
 current_matrix = create_one_zero_matrix(N)
