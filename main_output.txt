@@ -1,4 +1,5 @@
 Algorithm DLX
+
 This algorithm finds all solutions to an exact cover problem.
 An implementation of Donald Knuth's algorithm X, using dancing links, is used.
 For more information visit: https://github.com/Hedge-Hodge/Dancing_Links_N_Queens
@@ -122,7 +123,7 @@ Row 1, File 2
 Row 2, File 4
 Row 5, File 3
 Row 7, File 7
-File 6, Diagonal 7
+Row 3, File 6
 Row 8, File 5
 Row 4, File 8
 Row 6, File 1
@@ -233,7 +234,7 @@ Row 2, File 5
 Row 3, File 7
 Row 6, File 2
 Row 4, File 1
-File 4, Diagonal 7
+Row 5, File 4
 Row 7, File 8
 Row 8, File 6
 
@@ -252,7 +253,7 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 2
 Row 4, File 5
-File 7, Diagonal 12
+Row 7, File 7
 Row 8, File 4
 Row 5, File 8
 Row 6, File 1
@@ -282,8 +283,8 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 4
 Row 6, File 5
-File 7, Diagonal 12
-File 8, Diagonal 11
+Row 7, File 7
+Row 5, File 8
 Row 4, File 1
 Row 8, File 2
 
@@ -292,8 +293,8 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 4
 Row 6, File 5
-File 7, Diagonal 12
-File 8, Diagonal 11
+Row 7, File 7
+Row 5, File 8
 Row 4, File 2
 Row 8, File 1
 
@@ -393,7 +394,7 @@ Row 2, File 2
 Row 3, File 7
 Row 4, File 3
 Row 6, File 8
-File 6, Diagonal 9
+Row 5, File 6
 Row 7, File 1
 Row 8, File 5
 
@@ -403,7 +404,7 @@ Row 2, File 2
 Row 3, File 7
 Row 4, File 3
 Row 6, File 8
-File 6, Diagonal 9
+Row 5, File 6
 Row 7, File 5
 Row 8, File 1
 
@@ -412,7 +413,7 @@ Row 1, File 4
 Row 2, File 2
 Row 3, File 7
 Row 4, File 5
-File 8, Diagonal 12
+Row 6, File 8
 Row 8, File 3
 Row 5, File 1
 Row 7, File 6
@@ -502,7 +503,7 @@ Row 1, File 4
 Row 2, File 7
 Row 3, File 5
 Row 6, File 6
-File 1, Diagonal 4
+Row 5, File 1
 Row 4, File 3
 Row 7, File 8
 Row 8, File 2
@@ -522,7 +523,7 @@ Row 1, File 4
 Row 2, File 8
 Row 3, File 1
 Row 4, File 5
-File 3, Diagonal 9
+Row 8, File 3
 Row 5, File 7
 Row 6, File 2
 Row 7, File 6
@@ -532,7 +533,7 @@ Row 1, File 4
 Row 2, File 8
 Row 3, File 5
 Row 4, File 3
-File 2, Diagonal 7
+Row 7, File 2
 Row 8, File 6
 Row 5, File 1
 Row 6, File 7
@@ -542,7 +543,7 @@ Row 1, File 5
 Row 2, File 1
 Row 3, File 4
 Row 4, File 6
-File 7, Diagonal 12
+Row 7, File 7
 Row 8, File 3
 Row 5, File 8
 Row 6, File 2
@@ -552,7 +553,7 @@ Row 1, File 5
 Row 2, File 1
 Row 3, File 8
 Row 4, File 4
-File 6, Diagonal 12
+Row 8, File 6
 Row 5, File 2
 Row 6, File 7
 Row 7, File 3
@@ -572,8 +573,8 @@ Row 1, File 5
 Row 2, File 2
 Row 3, File 4
 Row 6, File 3
-File 1, Diagonal 6
-File 8, Diagonal 11
+Row 7, File 1
+Row 5, File 8
 Row 4, File 6
 Row 8, File 7
 
@@ -662,7 +663,7 @@ Row 1, File 5
 Row 2, File 7
 Row 3, File 2
 Row 4, File 4
-File 1, Diagonal 5
+Row 6, File 1
 Row 8, File 6
 Row 5, File 8
 Row 7, File 3
@@ -673,7 +674,7 @@ Row 2, File 7
 Row 3, File 2
 Row 4, File 6
 Row 6, File 1
-File 3, Diagonal 6
+Row 5, File 3
 Row 7, File 4
 Row 8, File 8
 
@@ -683,7 +684,7 @@ Row 2, File 7
 Row 3, File 2
 Row 4, File 6
 Row 6, File 1
-File 3, Diagonal 6
+Row 5, File 3
 Row 7, File 8
 Row 8, File 4
 
@@ -782,8 +783,8 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 5
 Row 6, File 4
-File 2, Diagonal 7
-File 1, Diagonal 4
+Row 7, File 2
+Row 5, File 1
 Row 4, File 7
 Row 8, File 8
 
@@ -792,8 +793,8 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 5
 Row 6, File 4
-File 2, Diagonal 7
-File 1, Diagonal 4
+Row 7, File 2
+Row 5, File 1
 Row 4, File 8
 Row 8, File 7
 
@@ -822,7 +823,7 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 7
 Row 4, File 4
-File 2, Diagonal 7
+Row 7, File 2
 Row 8, File 5
 Row 5, File 1
 Row 6, File 8
@@ -843,7 +844,7 @@ Row 2, File 4
 Row 3, File 2
 Row 6, File 7
 Row 4, File 8
-File 5, Diagonal 8
+Row 5, File 5
 Row 7, File 1
 Row 8, File 3
 
@@ -952,7 +953,7 @@ Row 1, File 7
 Row 2, File 5
 Row 5, File 6
 Row 7, File 2
-File 3, Diagonal 4
+Row 3, File 3
 Row 8, File 4
 Row 4, File 1
 Row 6, File 8

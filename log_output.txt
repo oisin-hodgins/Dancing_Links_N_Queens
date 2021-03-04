@@ -35,7 +35,7 @@ Row:	Row 3	File 7	Diagonal 8	Back Diagonal 11
 k=3
 Row:	Row 4	File 2	Diagonal 4	Back Diagonal 5
 k=4
-Row:	File 6	Diagonal 11	Back Diagonal 6	Row 7
+Row:	Row 7	File 6	Diagonal 11	Back Diagonal 6
 Problem encountered,	Row 5	is a dead constraint. BACKTRACK.
 k=2
 Row:	Row 3	File 8	Diagonal 9	Back Diagonal 12
@@ -122,7 +122,7 @@ Problem encountered,	File 8	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 8	Diagonal 10	Back Diagonal 11
 k=4
-Row:	File 7	Diagonal 11	Back Diagonal 8	Row 6
+Row:	Row 6	File 7	Diagonal 11	Back Diagonal 8
 k=5
 Row:	Row 5	File 3	Diagonal 6	Back Diagonal 5
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -141,7 +141,7 @@ Row:	Row 3	File 8	Diagonal 9	Back Diagonal 12
 k=3
 Row:	Row 4	File 2	Diagonal 4	Back Diagonal 5
 k=4
-Row:	File 6	Diagonal 11	Back Diagonal 6	Row 7
+Row:	Row 7	File 6	Diagonal 11	Back Diagonal 6
 k=5
 Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -176,7 +176,7 @@ Row:	Row 3	File 2	Diagonal 3	Back Diagonal 6
 k=3
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 k=4
-Row:	File 7	Diagonal 10	Back Diagonal 9	Row 5
+Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 Problem encountered,	File 8	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 7	Diagonal 9	Back Diagonal 10
@@ -332,7 +332,7 @@ Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 6	File 7	Diagonal 11	Back Diagonal 8
 k=4
-Row:	File 6	Diagonal 12	Back Diagonal 5	Row 8
+Row:	Row 8	File 6	Diagonal 12	Back Diagonal 5
 k=5
 Row:	Row 4	File 3	Diagonal 5	Back Diagonal 6
 Problem encountered,	Row 5	is a dead constraint. BACKTRACK.
@@ -366,7 +366,7 @@ Problem encountered,	File 5	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 7	File 7	Diagonal 12	Back Diagonal 7
 k=4
-Row:	File 6	Diagonal 7	Back Diagonal 10	Row 3
+Row:	Row 3	File 6	Diagonal 7	Back Diagonal 10
 k=5
 Row:	Row 8	File 5	Diagonal 11	Back Diagonal 4
 k=6
@@ -378,7 +378,7 @@ Row 1, File 2
 Row 2, File 4
 Row 5, File 3
 Row 7, File 7
-File 6, Diagonal 7
+Row 3, File 6
 Row 8, File 5
 Row 4, File 8
 Row 6, File 1
@@ -424,7 +424,7 @@ Row:	Row 3	File 1	Diagonal 2	Back Diagonal 5
 k=3
 Row:	Row 5	File 4	Diagonal 7	Back Diagonal 6
 k=4
-Row:	File 7	Diagonal 12	Back Diagonal 7	Row 7
+Row:	Row 7	File 7	Diagonal 12	Back Diagonal 7
 Problem encountered,	Row 6	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
@@ -597,7 +597,7 @@ Problem encountered,	File 6	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 8	Diagonal 11	Back Diagonal 10
 k=4
-Row:	File 5	Diagonal 9	Back Diagonal 6	Row 6
+Row:	Row 6	File 5	Diagonal 9	Back Diagonal 6
 k=5
 Row:	Row 7	File 3	Diagonal 8	Back Diagonal 3
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -679,7 +679,7 @@ Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 k=4
-Row:	File 6	Diagonal 11	Back Diagonal 6	Row 7
+Row:	Row 7	File 6	Diagonal 11	Back Diagonal 6
 Problem encountered,	File 5	is a dead constraint. BACKTRACK.
 k=2
 Row:	Row 3	File 3	Diagonal 4	Back Diagonal 7
@@ -702,7 +702,7 @@ Row:	Row 3	File 5	Diagonal 6	Back Diagonal 9
 k=3
 Row:	Row 5	File 1	Diagonal 4	Back Diagonal 3
 k=4
-Row:	File 4	Diagonal 9	Back Diagonal 4	Row 7
+Row:	Row 7	File 4	Diagonal 9	Back Diagonal 4
 k=5
 Row:	Row 4	File 3	Diagonal 5	Back Diagonal 6
 Problem encountered,	File 7	is a dead constraint. BACKTRACK.
@@ -759,7 +759,7 @@ Row:	Row 3	File 6	Diagonal 7	Back Diagonal 10
 k=3
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=4
-Row:	File 5	Diagonal 10	Back Diagonal 5	Row 7
+Row:	Row 7	File 5	Diagonal 10	Back Diagonal 5
 k=5
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -874,7 +874,7 @@ Row:	Row 6	File 2	Diagonal 6	Back Diagonal 3
 k=4
 Row:	Row 4	File 1	Diagonal 3	Back Diagonal 4
 k=5
-Row:	File 4	Diagonal 7	Back Diagonal 6	Row 5
+Row:	Row 5	File 4	Diagonal 7	Back Diagonal 6
 k=6
 Row:	Row 7	File 8	Diagonal 13	Back Diagonal 8
 k=7
@@ -885,7 +885,7 @@ Row 2, File 5
 Row 3, File 7
 Row 6, File 2
 Row 4, File 1
-File 4, Diagonal 7
+Row 5, File 4
 Row 7, File 8
 Row 8, File 6
 
@@ -933,7 +933,7 @@ Row:	Row 3	File 2	Diagonal 3	Back Diagonal 6
 k=3
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 k=4
-Row:	File 7	Diagonal 12	Back Diagonal 7	Row 7
+Row:	Row 7	File 7	Diagonal 12	Back Diagonal 7
 k=5
 Row:	Row 8	File 4	Diagonal 10	Back Diagonal 3
 k=6
@@ -945,7 +945,7 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 2
 Row 4, File 5
-File 7, Diagonal 12
+Row 7, File 7
 Row 8, File 4
 Row 5, File 8
 Row 6, File 1
@@ -993,9 +993,9 @@ Row:	Row 3	File 4	Diagonal 5	Back Diagonal 8
 k=3
 Row:	Row 6	File 5	Diagonal 9	Back Diagonal 6
 k=4
-Row:	File 7	Diagonal 12	Back Diagonal 7	Row 7
+Row:	Row 7	File 7	Diagonal 12	Back Diagonal 7
 k=5
-Row:	File 8	Diagonal 11	Back Diagonal 10	Row 5
+Row:	Row 5	File 8	Diagonal 11	Back Diagonal 10
 k=6
 Row:	Row 4	File 1	Diagonal 3	Back Diagonal 4
 k=7
@@ -1005,8 +1005,8 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 4
 Row 6, File 5
-File 7, Diagonal 12
-File 8, Diagonal 11
+Row 7, File 7
+Row 5, File 8
 Row 4, File 1
 Row 8, File 2
 
@@ -1019,8 +1019,8 @@ Row 1, File 3
 Row 2, File 6
 Row 3, File 4
 Row 6, File 5
-File 7, Diagonal 12
-File 8, Diagonal 11
+Row 7, File 7
+Row 5, File 8
 Row 4, File 2
 Row 8, File 1
 
@@ -1165,9 +1165,9 @@ Problem encountered,	File 6	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 2	Diagonal 4	Back Diagonal 5
 k=4
-Row:	File 1	Diagonal 6	Back Diagonal 1	Row 7
+Row:	Row 7	File 1	Diagonal 6	Back Diagonal 1
 k=5
-Row:	File 6	Diagonal 10	Back Diagonal 7	Row 6
+Row:	Row 6	File 6	Diagonal 10	Back Diagonal 7
 k=6
 Row:	Row 5	File 8	Diagonal 11	Back Diagonal 10
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -1245,12 +1245,12 @@ Row:	Row 2	File 1	Diagonal 1	Back Diagonal 6
 k=2
 Row:	Row 3	File 3	Diagonal 4	Back Diagonal 7
 k=3
-Row:	File 7	Diagonal 10	Back Diagonal 9	Row 5
+Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 k=4
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
-Row:	File 7	Diagonal 11	Back Diagonal 8	Row 6
+Row:	Row 6	File 7	Diagonal 11	Back Diagonal 8
 k=4
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=5
@@ -1380,7 +1380,7 @@ Row:	Row 4	File 3	Diagonal 5	Back Diagonal 6
 k=4
 Row:	Row 6	File 8	Diagonal 12	Back Diagonal 9
 k=5
-Row:	File 6	Diagonal 9	Back Diagonal 8	Row 5
+Row:	Row 5	File 6	Diagonal 9	Back Diagonal 8
 k=6
 Row:	Row 7	File 1	Diagonal 6	Back Diagonal 1
 k=7
@@ -1391,7 +1391,7 @@ Row 2, File 2
 Row 3, File 7
 Row 4, File 3
 Row 6, File 8
-File 6, Diagonal 9
+Row 5, File 6
 Row 7, File 1
 Row 8, File 5
 
@@ -1405,14 +1405,14 @@ Row 2, File 2
 Row 3, File 7
 Row 4, File 3
 Row 6, File 8
-File 6, Diagonal 9
+Row 5, File 6
 Row 7, File 5
 Row 8, File 1
 
 k=3
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 k=4
-Row:	File 8	Diagonal 12	Back Diagonal 9	Row 6
+Row:	Row 6	File 8	Diagonal 12	Back Diagonal 9
 k=5
 Row:	Row 8	File 3	Diagonal 9	Back Diagonal 2
 k=6
@@ -1424,7 +1424,7 @@ Row 1, File 4
 Row 2, File 2
 Row 3, File 7
 Row 4, File 5
-File 8, Diagonal 12
+Row 6, File 8
 Row 8, File 3
 Row 5, File 1
 Row 7, File 6
@@ -1682,7 +1682,7 @@ Row 4, File 2
 k=3
 Row:	Row 6	File 6	Diagonal 10	Back Diagonal 7
 k=4
-Row:	File 1	Diagonal 4	Back Diagonal 3	Row 5
+Row:	Row 5	File 1	Diagonal 4	Back Diagonal 3
 k=5
 Row:	Row 4	File 3	Diagonal 5	Back Diagonal 6
 k=6
@@ -1694,7 +1694,7 @@ Row 1, File 4
 Row 2, File 7
 Row 3, File 5
 Row 6, File 6
-File 1, Diagonal 4
+Row 5, File 1
 Row 4, File 3
 Row 7, File 8
 Row 8, File 2
@@ -1729,7 +1729,7 @@ Problem encountered,	File 6	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 k=4
-Row:	File 3	Diagonal 9	Back Diagonal 2	Row 8
+Row:	Row 8	File 3	Diagonal 9	Back Diagonal 2
 k=5
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=6
@@ -1746,7 +1746,7 @@ Row 1, File 4
 Row 2, File 8
 Row 3, File 1
 Row 4, File 5
-File 3, Diagonal 9
+Row 8, File 3
 Row 5, File 7
 Row 6, File 2
 Row 7, File 6
@@ -1779,7 +1779,7 @@ Problem encountered,	Row 6	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 3	Diagonal 5	Back Diagonal 6
 k=4
-Row:	File 2	Diagonal 7	Back Diagonal 2	Row 7
+Row:	Row 7	File 2	Diagonal 7	Back Diagonal 2
 k=5
 Row:	Row 8	File 6	Diagonal 12	Back Diagonal 5
 k=6
@@ -1791,7 +1791,7 @@ Row 1, File 4
 Row 2, File 8
 Row 3, File 5
 Row 4, File 3
-File 2, Diagonal 7
+Row 7, File 2
 Row 8, File 6
 Row 5, File 1
 Row 6, File 7
@@ -1805,7 +1805,7 @@ Row:	Row 3	File 4	Diagonal 5	Back Diagonal 8
 k=3
 Row:	Row 4	File 6	Diagonal 8	Back Diagonal 9
 k=4
-Row:	File 7	Diagonal 12	Back Diagonal 7	Row 7
+Row:	Row 7	File 7	Diagonal 12	Back Diagonal 7
 k=5
 Row:	Row 8	File 3	Diagonal 9	Back Diagonal 2
 k=6
@@ -1817,7 +1817,7 @@ Row 1, File 5
 Row 2, File 1
 Row 3, File 4
 Row 4, File 6
-File 7, Diagonal 12
+Row 7, File 7
 Row 8, File 3
 Row 5, File 8
 Row 6, File 2
@@ -1850,7 +1850,7 @@ Row:	Row 3	File 8	Diagonal 9	Back Diagonal 12
 k=3
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 k=4
-Row:	File 6	Diagonal 12	Back Diagonal 5	Row 8
+Row:	Row 8	File 6	Diagonal 12	Back Diagonal 5
 k=5
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=6
@@ -1862,7 +1862,7 @@ Row 1, File 5
 Row 2, File 1
 Row 3, File 8
 Row 4, File 4
-File 6, Diagonal 12
+Row 8, File 6
 Row 5, File 2
 Row 6, File 7
 Row 7, File 3
@@ -1902,9 +1902,9 @@ Row:	Row 3	File 4	Diagonal 5	Back Diagonal 8
 k=3
 Row:	Row 6	File 3	Diagonal 7	Back Diagonal 4
 k=4
-Row:	File 1	Diagonal 6	Back Diagonal 1	Row 7
+Row:	Row 7	File 1	Diagonal 6	Back Diagonal 1
 k=5
-Row:	File 8	Diagonal 11	Back Diagonal 10	Row 5
+Row:	Row 5	File 8	Diagonal 11	Back Diagonal 10
 k=6
 Row:	Row 4	File 6	Diagonal 8	Back Diagonal 9
 k=7
@@ -1914,8 +1914,8 @@ Row 1, File 5
 Row 2, File 2
 Row 3, File 4
 Row 6, File 3
-File 1, Diagonal 6
-File 8, Diagonal 11
+Row 7, File 1
+Row 5, File 8
 Row 4, File 6
 Row 8, File 7
 
@@ -2172,7 +2172,7 @@ Row:	Row 3	File 2	Diagonal 3	Back Diagonal 6
 k=3
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 k=4
-Row:	File 1	Diagonal 5	Back Diagonal 2	Row 6
+Row:	Row 6	File 1	Diagonal 5	Back Diagonal 2
 k=5
 Row:	Row 8	File 6	Diagonal 12	Back Diagonal 5
 k=6
@@ -2184,7 +2184,7 @@ Row 1, File 5
 Row 2, File 7
 Row 3, File 2
 Row 4, File 4
-File 1, Diagonal 5
+Row 6, File 1
 Row 8, File 6
 Row 5, File 8
 Row 7, File 3
@@ -2194,7 +2194,7 @@ Row:	Row 4	File 6	Diagonal 8	Back Diagonal 9
 k=4
 Row:	Row 6	File 1	Diagonal 5	Back Diagonal 2
 k=5
-Row:	File 3	Diagonal 6	Back Diagonal 5	Row 5
+Row:	Row 5	File 3	Diagonal 6	Back Diagonal 5
 k=6
 Row:	Row 7	File 4	Diagonal 9	Back Diagonal 4
 k=7
@@ -2205,7 +2205,7 @@ Row 2, File 7
 Row 3, File 2
 Row 4, File 6
 Row 6, File 1
-File 3, Diagonal 6
+Row 5, File 3
 Row 7, File 4
 Row 8, File 8
 
@@ -2219,7 +2219,7 @@ Row 2, File 7
 Row 3, File 2
 Row 4, File 6
 Row 6, File 1
-File 3, Diagonal 6
+Row 5, File 3
 Row 7, File 8
 Row 8, File 4
 
@@ -2343,12 +2343,12 @@ Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
 k=2
 Row:	Row 3	File 6	Diagonal 7	Back Diagonal 10
 k=3
-Row:	File 2	Diagonal 5	Back Diagonal 4	Row 5
+Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=4
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
-Row:	File 2	Diagonal 6	Back Diagonal 3	Row 6
+Row:	Row 6	File 2	Diagonal 6	Back Diagonal 3
 k=4
 Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 k=5
@@ -2430,9 +2430,9 @@ Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 7	Diagonal 9	Back Diagonal 10
 k=4
-Row:	File 8	Diagonal 13	Back Diagonal 8	Row 7
+Row:	Row 7	File 8	Diagonal 13	Back Diagonal 8
 k=5
-Row:	File 3	Diagonal 7	Back Diagonal 4	Row 6
+Row:	Row 6	File 3	Diagonal 7	Back Diagonal 4
 k=6
 Row:	Row 5	File 1	Diagonal 4	Back Diagonal 3
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -2577,9 +2577,9 @@ Row:	Row 3	File 5	Diagonal 6	Back Diagonal 9
 k=3
 Row:	Row 6	File 4	Diagonal 8	Back Diagonal 5
 k=4
-Row:	File 2	Diagonal 7	Back Diagonal 2	Row 7
+Row:	Row 7	File 2	Diagonal 7	Back Diagonal 2
 k=5
-Row:	File 1	Diagonal 4	Back Diagonal 3	Row 5
+Row:	Row 5	File 1	Diagonal 4	Back Diagonal 3
 k=6
 Row:	Row 4	File 7	Diagonal 9	Back Diagonal 10
 k=7
@@ -2589,8 +2589,8 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 5
 Row 6, File 4
-File 2, Diagonal 7
-File 1, Diagonal 4
+Row 7, File 2
+Row 5, File 1
 Row 4, File 7
 Row 8, File 8
 
@@ -2603,8 +2603,8 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 5
 Row 6, File 4
-File 2, Diagonal 7
-File 1, Diagonal 4
+Row 7, File 2
+Row 5, File 1
 Row 4, File 8
 Row 8, File 7
 
@@ -2651,7 +2651,7 @@ Row 8, File 4
 k=3
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 k=4
-Row:	File 2	Diagonal 7	Back Diagonal 2	Row 7
+Row:	Row 7	File 2	Diagonal 7	Back Diagonal 2
 k=5
 Row:	Row 8	File 5	Diagonal 11	Back Diagonal 4
 k=6
@@ -2663,7 +2663,7 @@ Row 1, File 6
 Row 2, File 3
 Row 3, File 7
 Row 4, File 4
-File 2, Diagonal 7
+Row 7, File 2
 Row 8, File 5
 Row 5, File 1
 Row 6, File 8
@@ -2714,7 +2714,7 @@ Row:	Row 6	File 7	Diagonal 11	Back Diagonal 8
 k=4
 Row:	Row 4	File 8	Diagonal 10	Back Diagonal 11
 k=5
-Row:	File 5	Diagonal 8	Back Diagonal 7	Row 5
+Row:	Row 5	File 5	Diagonal 8	Back Diagonal 7
 k=6
 Row:	Row 7	File 1	Diagonal 6	Back Diagonal 1
 k=7
@@ -2725,7 +2725,7 @@ Row 2, File 4
 Row 3, File 2
 Row 6, File 7
 Row 4, File 8
-File 5, Diagonal 8
+Row 5, File 5
 Row 7, File 1
 Row 8, File 3
 
@@ -2838,7 +2838,7 @@ Problem encountered,	Row 7	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 7	Diagonal 10	Back Diagonal 9
 k=4
-Row:	File 4	Diagonal 9	Back Diagonal 4	Row 7
+Row:	Row 7	File 4	Diagonal 9	Back Diagonal 4
 k=5
 Row:	Row 4	File 5	Diagonal 7	Back Diagonal 8
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -2895,7 +2895,7 @@ Problem encountered,	File 3	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 8	Diagonal 11	Back Diagonal 10
 k=4
-Row:	File 5	Diagonal 10	Back Diagonal 5	Row 7
+Row:	Row 7	File 5	Diagonal 10	Back Diagonal 5
 k=5
 Row:	Row 4	File 6	Diagonal 8	Back Diagonal 9
 Problem encountered,	File 2	is a dead constraint. BACKTRACK.
@@ -2920,7 +2920,7 @@ Row:	Row 3	File 8	Diagonal 9	Back Diagonal 12
 k=3
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 k=4
-Row:	File 3	Diagonal 8	Back Diagonal 3	Row 7
+Row:	Row 7	File 3	Diagonal 8	Back Diagonal 3
 Problem encountered,	File 4	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 5	Diagonal 8	Back Diagonal 7
@@ -3000,7 +3000,7 @@ Row:	Row 3	File 8	Diagonal 9	Back Diagonal 12
 k=3
 Row:	Row 5	File 1	Diagonal 4	Back Diagonal 3
 k=4
-Row:	File 4	Diagonal 8	Back Diagonal 5	Row 6
+Row:	Row 6	File 4	Diagonal 8	Back Diagonal 5
 k=5
 Row:	Row 7	File 6	Diagonal 11	Back Diagonal 6
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -3175,7 +3175,7 @@ Problem encountered,	File 1	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 5	File 5	Diagonal 8	Back Diagonal 7
 k=4
-Row:	File 2	Diagonal 7	Back Diagonal 2	Row 7
+Row:	Row 7	File 2	Diagonal 7	Back Diagonal 2
 Problem encountered,	Row 6	is a dead constraint. BACKTRACK.
 k=1
 Row:	Row 2	File 5	Diagonal 5	Back Diagonal 10
@@ -3218,7 +3218,7 @@ Row:	Row 5	File 6	Diagonal 9	Back Diagonal 8
 k=3
 Row:	Row 7	File 2	Diagonal 7	Back Diagonal 2
 k=4
-Row:	File 3	Diagonal 4	Back Diagonal 7	Row 3
+Row:	Row 3	File 3	Diagonal 4	Back Diagonal 7
 k=5
 Row:	Row 8	File 4	Diagonal 10	Back Diagonal 3
 k=6
@@ -3230,7 +3230,7 @@ Row 1, File 7
 Row 2, File 5
 Row 5, File 6
 Row 7, File 2
-File 3, Diagonal 4
+Row 3, File 3
 Row 8, File 4
 Row 4, File 1
 Row 6, File 8
@@ -3265,7 +3265,7 @@ Row:	Row 3	File 4	Diagonal 5	Back Diagonal 8
 k=3
 Row:	Row 6	File 2	Diagonal 6	Back Diagonal 3
 k=4
-Row:	File 3	Diagonal 9	Back Diagonal 2	Row 8
+Row:	Row 8	File 3	Diagonal 9	Back Diagonal 2
 k=5
 Row:	Row 4	File 6	Diagonal 8	Back Diagonal 9
 Problem encountered,	Row 5	is a dead constraint. BACKTRACK.
@@ -3423,7 +3423,7 @@ Problem encountered,	Row 5	is a dead constraint. BACKTRACK.
 k=3
 Row:	Row 4	File 4	Diagonal 6	Back Diagonal 7
 k=4
-Row:	File 2	Diagonal 5	Back Diagonal 4	Row 5
+Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 Problem encountered,	File 1	is a dead constraint. BACKTRACK.
 k=1
 Row:	Row 2	File 4	Diagonal 4	Back Diagonal 9
@@ -3452,7 +3452,7 @@ Row 8, File 5
 k=3
 Row:	Row 4	File 7	Diagonal 9	Back Diagonal 10
 k=4
-Row:	File 3	Diagonal 8	Back Diagonal 3	Row 7
+Row:	Row 7	File 3	Diagonal 8	Back Diagonal 3
 k=5
 Row:	Row 5	File 2	Diagonal 5	Back Diagonal 4
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -3471,7 +3471,7 @@ Row:	Row 3	File 7	Diagonal 8	Back Diagonal 11
 k=3
 Row:	Row 4	File 1	Diagonal 3	Back Diagonal 4
 k=4
-Row:	File 2	Diagonal 6	Back Diagonal 3	Row 6
+Row:	Row 6	File 2	Diagonal 6	Back Diagonal 3
 k=5
 Row:	Row 5	File 6	Diagonal 9	Back Diagonal 8
 Problem encountered,	Row 8	is a dead constraint. BACKTRACK.
@@ -3560,7 +3560,7 @@ Row:	Row 3	File 2	Diagonal 3	Back Diagonal 6
 k=3
 Row:	Row 4	File 7	Diagonal 9	Back Diagonal 10
 k=4
-Row:	File 3	Diagonal 8	Back Diagonal 3	Row 7
+Row:	Row 7	File 3	Diagonal 8	Back Diagonal 3
 Problem encountered,	Row 5	is a dead constraint. BACKTRACK.
 k=2
 Row:	Row 3	File 3	Diagonal 4	Back Diagonal 7

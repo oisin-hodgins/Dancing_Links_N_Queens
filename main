@@ -1,7 +1,8 @@
 import numpy as py
+import time
 import os
 import math
-
+start_time = time.time()
 
 # Specific NQueens function: Creates an empty matrix of size n^2 by 2(3n-3),
 # to hold all possible placements and constraints
@@ -89,6 +90,7 @@ class CircularList:
         self.total_solutions = 0            # Used to count the number of solutions, for labelling their output later
         self.file_write_initial()           # Call the initial main file function
         self.file_write_initial_log()       # Call the initial log file
+        self.header_list = []               # Stores the original order of header names, for outputting solutions
 
     # Helper function: Finds a named column's index
     # Starts at the master node
@@ -141,6 +143,7 @@ class CircularList:
                 current_column.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
                 current_column.primary = False
         self.file_write_n_queen(n)  # Write the according introduction to the main output file
+        self.create_original_header_list()
         return None
 
     # Helper function: Updates the solution list by adding a new node
@@ -235,8 +238,8 @@ class CircularList:
         # Write the entire solution list to the file
         for i in range(len(self.solution_list)):
             # Furthest left nonsense is a relic of a failed optimization
-            # furthest_left = self.find_furthest_left(self.solution_list[i])
-            furthest_left = self.solution_list[i]
+            furthest_left = self.find_furthest_left(self.solution_list[i])
+            #furthest_left = self.solution_list[i]
             # Write the node in the solution, as well as the node to the right of it
             file.write(furthest_left.column.name)
             file.write(", ")
@@ -261,13 +264,45 @@ class CircularList:
         log_file.close()
         return None
 
-    # Note to self: fix this or remove it
+    # Helper function: Finds a column header's original index, regardless of any current covered columns.
+    # This function facilitates the find_furthest_left function, to ensure rows of the solution always start with the
+    # furthest left node.
+    # Arguments: name = the name of the column to be searched for
+    # Return: index = the column header's original index.
+    # Note this can also return None, if no match was found for the inputted name.
+    def find_original_index_by_name(self, name):
+        index = 0
+        for i in range(len(self.header_list)):
+            if name == self.header_list[i]:
+                return index
+            index = index + 1
+        print("DEBUG: No matching name found in the original column header list.")
+        return None
+
+    # Helper function: Initialises the header list, used to ensure the order in which nodes in the solution are written
+    # to file, is correct. This MUST be called each time the column header's names change.
+    # Arguments: None
+    # Return: None
+    def create_original_header_list(self):
+        current_header = self.master_node.right
+        while current_header != self.master_node:
+            self.header_list.append(current_header.name)
+            current_header = current_header.right
+        return None
+
+    # Helper function: Finds the furthest left node in a row. Used to ensure the order in which nodes in the solution
+    # are written to file are correct.
+    # Arguments: current_node = a node in the row to be searched
+    # Return: best_node = the furthest left node
     def find_furthest_left(self, current_node):
         dummy_node = current_node.left
         best_node = current_node
-        best_index = self.find_column_index_by_name(current_node.column.name)
+        print("current node", current_node)
+        best_index = self.find_original_index_by_name(current_node.column.name)
+        print("best index", best_index)
         while dummy_node != current_node:
-            dummy_index = self.find_column_index_by_name(dummy_node.column.name)
+            dummy_index = self.find_original_index_by_name(dummy_node.column.name)
+            print("dummy", dummy_index)
             if dummy_index < best_index:
                 best_node = dummy_node
                 best_index = dummy_index
@@ -290,8 +325,8 @@ class CircularList:
             log_file.write("\tis a dead constraint. BACKTRACK.\n")
         # Otherwise write this row into the solution
         else:
-            # current_node = self.find_furthest_left(node)
-            current_node = node
+            current_node = self.find_furthest_left(node)
+            #current_node = node
             # Write the current depth of the algorithm
             log_file.write("k={0}\n".format(k))
             # Simple placeholder
@@ -322,9 +357,6 @@ class CircularList:
         dims = py.shape(matrix)  # Find the dimensions of the matrix
         x = dims[0]  # Number of rows
         y = dims[1]  # Number of columns
-
-        # print("x: ", x) DEBUG
-        # print("y: ", y) DEBUG
 
         # Create the column headers
         previous_header = self.master_node
@@ -389,6 +421,9 @@ class CircularList:
             current_node.down = current_header
             current_header.up = current_node
             current_header = current_header.right  # Step right
+        self.create_original_header_list()  # This function is called now that the list object has no 'loose' edges
+        # It is needed to facilitate the logging of solutions
+        print(self.header_list)
         return self.master_node
 
     # DLX helper function: Cover a column of the list object
@@ -559,3 +594,4 @@ while this_node != test.master_node:
 
 # PRAY
 test.dlx(0)
+print("--- %s seconds ---" % (time.time() - start_time))
