@@ -1,15 +1,18 @@
 import numpy as py
 import pandas as pd
+import time
+import os
+import math
 from matplotlib import pyplot as plt
 from matplotlib import colors
-
+start_time = time.time()
 
 # Specific NQueens function: Creates an empty matrix of size n^2 by 2(3n-3),
 # to hold all possible placements and constraints
 # Arguments: n = size of board
 # Return: one_zero = Empty matrix
 def create_one_zero_matrix(n):
-    one_zero = py.zeros(((n ** 2), (2 * (3 * n - 3))), dtype=int)  # Native numpy function to create a zero matrix
+    one_zero = py.zeros(((n**2), (2*(3*n-3))), dtype=int)  # Native numpy function to create a zero matrix
     # See report for details about these dimensions
     return one_zero
 
@@ -34,16 +37,16 @@ def populate_one_zero_matrix(one_zero_matrix, n):
             # Set current y value
             y = k
             # Compute the diagonal and backward diagonal constraints
-            diag_constraint = (2 * n - 1) + x + y
-            back_diag_constraint = 5 * n - 5 - x + y
+            diag_constraint = (2*n - 1) + x + y
+            back_diag_constraint = 5*n - 5 - x + y
             # Now populate the current row with 1's wherever constraints are satisfied
             current_row[x] = 1
             current_row[y + n] = 1
             # Check to see if this is a significant diagonal
-            if (2 * n - 1) < diag_constraint < (4 * n - 3):
+            if (2 * n - 1) < diag_constraint < (4*n - 3):
                 current_row[diag_constraint] = 1
             # Check to see if this is a significant backward diagonal
-            if (4 * n - 3) <= back_diag_constraint < (6 * n - 6):
+            if (4*n - 3) <= back_diag_constraint < (6*n - 6):
                 current_row[back_diag_constraint] = 1
             one_zero_matrix[counter] = current_row
             counter = counter + 1
@@ -54,13 +57,13 @@ def populate_one_zero_matrix(one_zero_matrix, n):
 # No initial specification of the attributes
 class Column:
     def __init__(self):
-        self.left = None  # Points to the node/column header to the left of this header
-        self.right = None  # Points to the node/column header to the right of this header
-        self.up = None  # Points to the node above this header
-        self.down = None  # Points to the node below this header
-        self.size = 0  # Refers to the number of nodes below this object/ in it's column
-        self.name = None  # Cosmetic attribute for outputting solutions
-        self.primary = True  # Specific attribute for NQueens, see report for more details
+        self.left = None    # Points to the node/column header to the left of this header
+        self.right = None   # Points to the node/column header to the right of this header
+        self.up = None      # Points to the node above this header
+        self.down = None    # Points to the node below this header
+        self.size = 0       # Refers to the number of nodes below this object/ in it's column
+        self.name = None    # Cosmetic attribute for outputting solutions
+        self.primary = True     # Specific attribute for NQueens, see report for more details
 
 
 # Class declaration for the regular nodes.
@@ -68,10 +71,10 @@ class Column:
 # No initial specification of the attributes
 class Node:
     def __init__(self):
-        self.left = None  # Points to the node to the left
-        self.right = None  # Points to the node to the right
-        self.up = None  # Points to the node/column header above
-        self.down = None  # Points to the node/column header below
+        self.left = None    # Points to the node to the left
+        self.right = None   # Points to the node to the right
+        self.up = None      # Points to the node/column header above
+        self.down = None    # Points to the node/column header below
         self.column = None  # Points to the column header above, regardless of how many nodes are above
 
 
@@ -80,17 +83,18 @@ class Node:
 # As well as the solution list and the total number of solutions
 class CircularList:
     def __init__(self, master_node=Column()):
-        self.list2 = []
-        self.master_node = master_node  # Create a column header to be the master node
-        master_node.name = "Master"  # Set this header's name
-        master_node.size = 10000000000000  # Set the master node's size to be very large,
+        self.master_node = master_node      # Create a column header to be the master node
+        master_node.name = "Master"         # Set this header's name
+        master_node.size = 10000000000000   # Set the master node's size to be very large,
         # so that it is never chosen to be part of the solution
-        master_node.primary = False  # If this is a general application of DLX, this condition is needed for
+        master_node.primary = False         # If this is a general application of DLX, this condition is needed for
         # solutions to be found. See self.dlx for details
-        self.solution_list = []  # Used to store the nodes in the solution
-        self.total_solutions = 0  # Used to count the number of solutions, for labelling their output later
-        self.file_write_initial()  # Call the initial main file function
-        self.file_write_initial_log()  # Call the initial log file
+        self.solution_list = []             # Used to store the nodes in the solution
+        self.total_solutions = 0            # Used to count the number of solutions, for labelling their output later
+        self.file_write_initial()           # Call the initial main file function
+        self.file_write_initial_log()       # Call the initial log file
+        self.header_list = []               # Stores the original order of header names, for outputting solutions
+        self.list2 = []
         self.list1 = []
         self.board = py.zeros((N, N))
         self.gate = 0
@@ -136,17 +140,18 @@ class CircularList:
             if i < n:
                 current_column.name = "Row {0}".format(i + 1)
             # Files
-            elif i < 2 * n:
+            elif i < 2*n:
                 current_column.name = "File {0}".format(int((i % n) + 1))
             # Diagonals
-            elif i < (4 * n - 3):
-                current_column.name = "Diagonal {0}".format(int((i % (2 * n)) + 1))
+            elif i < (4*n - 3):
+                current_column.name = "Diagonal {0}".format(int((i % (2*n)) + 1))
                 current_column.primary = False
             # Back Diagonals
             else:
-                current_column.name = "Back Diagonal {0}".format(int((i % (4 * n - 3)) + 1))
+                current_column.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
                 current_column.primary = False
         self.file_write_n_queen(n)  # Write the according introduction to the main output file
+        self.create_original_header_list()
         return None
 
     # Helper function: Updates the solution list by adding a new node
@@ -225,7 +230,7 @@ class CircularList:
     # Helper function: Used to write a single solution to either output file
     # The filename is passed as an argument here allowing this to be used in both the main output and log files
     # Some bad practice here, with if statements. Open to suggestions.
-    # Arguments: filename = either 'main_output.txt' or 'log_output2.txt'
+    # Arguments: filename = either 'main_output.txt' or 'log_output.txt'
     # Return: None
     def file_write_solution(self, filename):
         # Only update the counter for the main output file, otherwise we would update twice for each solution
@@ -241,8 +246,8 @@ class CircularList:
         # Write the entire solution list to the file
         for i in range(len(self.solution_list)):
             # Furthest left nonsense is a relic of a failed optimization
-            # furthest_left = self.find_furthest_left(self.solution_list[i])
-            furthest_left = self.solution_list[i]
+            furthest_left = self.find_furthest_left(self.solution_list[i])
+            #furthest_left = self.solution_list[i]
             # Write the node in the solution, as well as the node to the right of it
             file.write(furthest_left.column.name)
             file.write(", ")
@@ -256,7 +261,7 @@ class CircularList:
     # Arguments: None
     # Return: None
     def file_write_initial_log(self):
-        log_file = open("log_output2.txt", "w")
+        log_file = open("log_output.txt", "w")
         log_file.write("DLX Log\n\n")
         log_file.write("See 'main_output.txt' for the proper algorithm output and aesthetic solution list.\n")
         log_file.write("This file contains a detailed record of each iteration of the recursive DLX algorithm.\n")
@@ -267,18 +272,51 @@ class CircularList:
         log_file.close()
         return None
 
-    # Note to self: fix this or remove it
+    # Helper function: Finds a column header's original index, regardless of any current covered columns.
+    # This function facilitates the find_furthest_left function, to ensure rows of the solution always start with the
+    # furthest left node.
+    # Arguments: name = the name of the column to be searched for
+    # Return: index = the column header's original index.
+    # Note this can also return None, if no match was found for the inputted name.
+    def find_original_index_by_name(self, name):
+        index = 0
+        for i in range(len(self.header_list)):
+            if name == self.header_list[i]:
+                return index
+            index = index + 1
+        print("DEBUG: No matching name found in the original column header list.")
+        return None
+
+    # Helper function: Initialises the header list, used to ensure the order in which nodes in the solution are written
+    # to file, is correct. This MUST be called each time the column header's names change.
+    # Arguments: None
+    # Return: None
+    def create_original_header_list(self):
+        current_header = self.master_node.right
+        while current_header != self.master_node:
+            self.header_list.append(current_header.name)
+            current_header = current_header.right
+        return None
+
+    # Helper function: Finds the furthest left node in a row. Used to ensure the order in which nodes in the solution
+    # are written to file are correct.
+    # Arguments: current_node = a node in the row to be searched
+    # Return: best_node = the furthest left node
     def find_furthest_left(self, current_node):
         dummy_node = current_node.left
         best_node = current_node
-        best_index = self.find_column_index_by_name(current_node.column.name)
+        print("current node", current_node)
+        best_index = self.find_original_index_by_name(current_node.column.name)
+        print("best index", best_index)
         while dummy_node != current_node:
-            dummy_index = self.find_column_index_by_name(dummy_node.column.name)
+            dummy_index = self.find_original_index_by_name(dummy_node.column.name)
+            print("dummy", dummy_index)
             if dummy_index < best_index:
                 best_node = dummy_node
                 best_index = dummy_index
             dummy_node = dummy_node.left
         return best_node
+
 
     # Core function: Write a single iteration of DLX to the log
     # This write will include the depth of the algorithm as well as the row it has chosen to try.
@@ -297,7 +335,7 @@ class CircularList:
             log_file.write("\tis a dead constraint. BACKTRACK.\n")
         else:
             # current_node = self.find_furthest_left(node)
-            current_node = node
+            current_node = self.find_furthest_left(node)
             # Write the current depth of the algorithm
             log_file.write("k={0}\n".format(k))
             # Simple placeholder
@@ -334,21 +372,23 @@ class CircularList:
         else:
             self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1
             self.colour_map = colors.ListedColormap(['white', 'blue'])
-
-
+        plt.close()
         plt.figure(figsize=(N, N))
         plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
         plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-        plt.show()
+        plt.draw()
+        plt.pause(0.2)
 
         print(self.board)
-        if self.board.sum () == N:
+        if self.board.sum() == N:
+            plt.close()
             print("Solution Found!")
             self.colour_map = colors.ListedColormap(['white', 'green'])
             plt.figure(figsize=(N, N))
             plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
             plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-            plt.show()
+            plt.draw()
+            plt.pause(1)
             self.board = self.board*0
         return None
 
@@ -367,9 +407,6 @@ class CircularList:
         dims = py.shape(matrix)  # Find the dimensions of the matrix
         x = dims[0]  # Number of rows
         y = dims[1]  # Number of columns
-
-        # print("x: ", x) DEBUG
-        # print("y: ", y) DEBUG
 
         # Create the column headers
         previous_header = self.master_node
@@ -434,6 +471,9 @@ class CircularList:
             current_node.down = current_header
             current_header.up = current_node
             current_header = current_header.right  # Step right
+        self.create_original_header_list()  # This function is called now that the list object has no 'loose' edges
+        # It is needed to facilitate the logging of solutions
+        print(self.header_list)
         return self.master_node
 
     # DLX helper function: Cover a column of the list object
@@ -528,7 +568,7 @@ class CircularList:
             self.print_solution()  # DEBUG
             # Write this solution to both output files
             self.file_write_solution("main_output.txt")
-            self.file_write_solution("log_output2.txt")
+            self.file_write_solution("log_output.txt")
             # Return now
             return None
         else:
@@ -558,7 +598,7 @@ class CircularList:
                     current_right = current_right.right  # step right
                 # print("Recursive call")  # DEBUG
                 # Call dlx again, with depth += 1
-                self.dlx(k + 1)
+                self.dlx(k+1)
                 current_node = self.solution_list[k]  # Retrieve the current node from the solution list
                 current_column = current_node.column  # Find its column
                 # Iterate left to uncover
@@ -572,7 +612,7 @@ class CircularList:
         return None
 
 
-N = 4
+N = 8
 print("N = ", N)
 print("Creating empty 1-0 Matrix...")
 current_matrix = create_one_zero_matrix(N)
@@ -604,4 +644,4 @@ while this_node != test.master_node:
 
 # PRAY
 test.dlx(0)
-
+print("--- %s seconds ---" % (time.time() - start_time))
