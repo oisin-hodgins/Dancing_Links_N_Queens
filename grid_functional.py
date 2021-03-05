@@ -1,8 +1,6 @@
 import numpy as py
 import pandas as pd
 import time
-import os
-import math
 from matplotlib import pyplot as plt
 from matplotlib import colors
 start_time = time.time()
@@ -94,11 +92,11 @@ class CircularList:
         self.file_write_initial()           # Call the initial main file function
         self.file_write_initial_log()       # Call the initial log file
         self.header_list = []               # Stores the original order of header names, for outputting solutions
-        self.list2 = []
-        self.list1 = []
-        self.board = py.zeros((N, N))
-        self.gate = 0
-        self.colour_map = colors.ListedColormap(['yellow', 'green'])
+        self.move_set = []                  # List of lists to keep track of move set
+        self.current_move = []              # Temporary list of current move coordinates
+        self.board = py.zeros((N, N))       # Initial board is an N X N zero matrix
+        self.backtrack_counter = 0          # Counter for keeping track of backtracking
+        self.colour_map = colors.ListedColormap(['yellow', 'green']) # default colourscheme for grid
 
     # Helper function: Finds a named column's index
     # Starts at the master node
@@ -325,71 +323,70 @@ class CircularList:
     # k = the depth of the algorithm at this time, default = 0
     # backtrack[boolean] = whether or not to record a backtrack in the log, default = False
     # Return: None
-    def file_write_log_row(self, node, k=0, backtrack=False):
-        self.list1 = []
+    def log_row_board(self, node, k=0, backtrack=False):
+        self.current_move = [] # list of current moves, namely row = X and file = Y
         log_file = open("log_output2.txt", "a")
         if backtrack:
-            self.gate+= 1
+            self.backtrack_counter+= 1 # counter that tells us to delete some previous nodes
             log_file.write("Problem encountered,\t")
             log_file.write(node.name)
             log_file.write("\tis a dead constraint. BACKTRACK.\n")
         else:
-            # current_node = self.find_furthest_left(node)
             current_node = self.find_furthest_left(node)
             # Write the current depth of the algorithm
             log_file.write("k={0}\n".format(k))
             # Simple placeholder
             log_file.write("Row:\t")
             log_file.write(current_node.column.name)
-            self.list1.append(current_node.column.name)
+            self.current_move.append(current_node.column.name)
             dummy_node = current_node.right
             # Iterate across the row, writing the name of the node's column header each time
-            self.list1.append(dummy_node.column.name)
+            self.current_move.append(dummy_node.column.name)
             while dummy_node != current_node:
                 log_file.write("\t")
                 dummy_node = dummy_node.right
             log_file.write("\n")
         log_file.close()
-        self.list2.append(self.list1)
-        df = pd.DataFrame(self.list2)
-        df[0] = df[0].str.replace("Row ", "")
+        self.move_set.append(self.current_move) # add current move to move set list
+        df = pd.DataFrame(self.move_set) # convert move set list to pandas dataframe
+        df[0] = df[0].str.replace("Row ", "") # remove strings
         df[1] = df[1].str.replace("File ", "")
-        df.dropna(inplace=True)
+        df.dropna(inplace=True) # remove NaN data that appears due to how backtracking is handled
         print(df)
-        print("Row to clear:", df[0].iloc[-1])
-        print(self.gate)
-        if self.gate == 1:
-            self.gate+=1
-            self.colour_map = colors.ListedColormap(['white', 'red'])
-        elif self.gate== 2:
-            self.gate -= 2
+        print("Row to clear:", df[0].iloc[-1]) #debug
+        print(self.backtrack_counter)
+        if self.backtrack_counter == 1:
+            self.backtrack_counter+=1
+            self.colour_map = colors.ListedColormap(['white', 'red']) # use the red backtrack board on grid
+        elif self.backtrack_counter== 2: # backtrack before new move is added
+            self.backtrack_counter -= 2
             print("Test", int(df[0].iloc[-1]))
             for i in range(N):
                 for j in range(int(df[0].iloc[-1])-1,N):
-                    self.board[(j, i)] *= 0
-            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1
+                    self.board[(j, i)] *= 0 # Delete all rows above new move to backtrack
+            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1 # Add new move to the 4X4 matrix
+            self.colour_map = colors.ListedColormap(['white', 'blue']) # new moves get blue colour scheme
+        else: # if no backtracking, add new move
+            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1 # if no backtracking,
             self.colour_map = colors.ListedColormap(['white', 'blue'])
-        else:
-            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1
-            self.colour_map = colors.ListedColormap(['white', 'blue'])
-        plt.close()
+        plt.close() #close previous board
         plt.figure(figsize=(N, N))
         plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
         plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
         plt.draw()
-        plt.pause(0.2)
+        plt.pause(0.2) # pause needed otherwise algorithm moves on too fast to see the board
 
         print(self.board)
-        if self.board.sum() == N:
+        if self.board.sum() == N: # solution is found when there is N correct placements on the board
             plt.close()
             print("Solution Found!")
-            self.colour_map = colors.ListedColormap(['white', 'green'])
+            self.colour_map = colors.ListedColormap(['white', 'green']) # Green colour scheme for success!
             plt.figure(figsize=(N, N))
             plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
             plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
             plt.draw()
-            plt.pause(1)
-            self.board = self.board*0
+            plt.pause(1) # keep the board up for 1 second so we can see our solution!
+            self.board = self.board*0 # resets the board
         return None
 
     # Core function: This very important function converts a 1-0 matrix into a general list object
@@ -548,7 +545,7 @@ class CircularList:
         while current_header != self.master_node:
             # We do not care is non-primary constraints are dead
             if current_header.primary and current_header.size <= 0:
-                self.file_write_log_row(current_header, backtrack=True)  # Log this backtrack
+                self.log_row_board(current_header, backtrack=True)  # Log this backtrack
                 return True
             current_header = current_header.right
         return False
@@ -589,7 +586,7 @@ class CircularList:
                 self.set_solution_k(current_node, k)  # Add this to the solution list, will be overwritten if not a
                 # solution.
                 # Record this step of the algorithm in the log
-                self.file_write_log_row(current_node, k, backtrack=False)
+                self.log_row_board(current_node, k, backtrack=False)
                 # Iterate across this row
                 current_right = current_node.right
                 while current_right != current_node:
