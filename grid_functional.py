@@ -1,16 +1,18 @@
 import numpy as py
 import pandas as pd
-import time
 from matplotlib import pyplot as plt
 from matplotlib import colors
-start_time = time.time()
+import warnings
+
+warnings.filterwarnings("ignore")
+
 
 # Specific NQueens function: Creates an empty matrix of size n^2 by 2(3n-3),
 # to hold all possible placements and constraints
 # Arguments: n = size of board
 # Return: one_zero = Empty matrix
 def create_one_zero_matrix(n):
-    one_zero = py.zeros(((n**2), (2*(3*n-3))), dtype=int)  # Native numpy function to create a zero matrix
+    one_zero = py.zeros(((n ** 2), (2 * (3 * n - 3))), dtype=int)  # Native numpy function to create a zero matrix
     # See report for details about these dimensions
     return one_zero
 
@@ -35,16 +37,16 @@ def populate_one_zero_matrix(one_zero_matrix, n):
             # Set current y value
             y = k
             # Compute the diagonal and backward diagonal constraints
-            diag_constraint = (2*n - 1) + x + y
-            back_diag_constraint = 5*n - 5 - x + y
+            diag_constraint = (2 * n - 1) + x + y
+            back_diag_constraint = 5 * n - 5 - x + y
             # Now populate the current row with 1's wherever constraints are satisfied
             current_row[x] = 1
             current_row[y + n] = 1
             # Check to see if this is a significant diagonal
-            if (2 * n - 1) < diag_constraint < (4*n - 3):
+            if (2 * n - 1) < diag_constraint < (4 * n - 3):
                 current_row[diag_constraint] = 1
             # Check to see if this is a significant backward diagonal
-            if (4*n - 3) <= back_diag_constraint < (6*n - 6):
+            if (4 * n - 3) <= back_diag_constraint < (6 * n - 6):
                 current_row[back_diag_constraint] = 1
             one_zero_matrix[counter] = current_row
             counter = counter + 1
@@ -55,13 +57,13 @@ def populate_one_zero_matrix(one_zero_matrix, n):
 # No initial specification of the attributes
 class Column:
     def __init__(self):
-        self.left = None    # Points to the node/column header to the left of this header
-        self.right = None   # Points to the node/column header to the right of this header
-        self.up = None      # Points to the node above this header
-        self.down = None    # Points to the node below this header
-        self.size = 0       # Refers to the number of nodes below this object/ in it's column
-        self.name = None    # Cosmetic attribute for outputting solutions
-        self.primary = True     # Specific attribute for NQueens, see report for more details
+        self.left = None  # Points to the node/column header to the left of this header
+        self.right = None  # Points to the node/column header to the right of this header
+        self.up = None  # Points to the node above this header
+        self.down = None  # Points to the node below this header
+        self.size = 0  # Refers to the number of nodes below this object/ in it's column
+        self.name = None  # Cosmetic attribute for outputting solutions
+        self.primary = True  # Specific attribute for NQueens, see report for more details
 
 
 # Class declaration for the regular nodes.
@@ -69,10 +71,10 @@ class Column:
 # No initial specification of the attributes
 class Node:
     def __init__(self):
-        self.left = None    # Points to the node to the left
-        self.right = None   # Points to the node to the right
-        self.up = None      # Points to the node/column header above
-        self.down = None    # Points to the node/column header below
+        self.left = None  # Points to the node to the left
+        self.right = None  # Points to the node to the right
+        self.up = None  # Points to the node/column header above
+        self.down = None  # Points to the node/column header below
         self.column = None  # Points to the column header above, regardless of how many nodes are above
 
 
@@ -81,22 +83,23 @@ class Node:
 # As well as the solution list and the total number of solutions
 class CircularList:
     def __init__(self, master_node=Column()):
-        self.master_node = master_node      # Create a column header to be the master node
-        master_node.name = "Master"         # Set this header's name
-        master_node.size = 10000000000000   # Set the master node's size to be very large,
+        self.colour2 = 'blue'
+        self.master_node = master_node  # Create a column header to be the master node
+        master_node.name = "Master"  # Set this header's name
+        master_node.size = 10000000000000  # Set the master node's size to be very large,
         # so that it is never chosen to be part of the solution
-        master_node.primary = False         # If this is a general application of DLX, this condition is needed for
+        master_node.primary = False  # If this is a general application of DLX, this condition is needed for
         # solutions to be found. See self.dlx for details
-        self.solution_list = []             # Used to store the nodes in the solution
-        self.total_solutions = 0            # Used to count the number of solutions, for labelling their output later
-        self.file_write_initial()           # Call the initial main file function
-        self.file_write_initial_log()       # Call the initial log file
-        self.header_list = []               # Stores the original order of header names, for outputting solutions
-        self.move_set = []                  # List of lists to keep track of move set
-        self.current_move = []              # Temporary list of current move coordinates
-        self.board = py.zeros((N, N))       # Initial board is an N X N zero matrix
-        self.backtrack_counter = 0          # Counter for keeping track of backtracking
-        self.colour_map = colors.ListedColormap(['yellow', 'green']) # default colourscheme for grid
+        self.solution_list = []  # Used to store the nodes in the solution
+        self.total_solutions = 0  # Used to count the number of solutions, for labelling their output later
+        self.file_write_initial()  # Call the initial main file function
+        self.file_write_initial_log()  # Call the initial log file
+        self.header_list = []  # Stores the original order of header names, for outputting solutions
+        self.move_set = []  # List of lists to keep track of move set
+        self.current_move = []  # Temporary list of current move coordinates
+        self.board = py.zeros((N, N))  # Initial board is an N X N zero matrix
+        self.backtrack_counter = 0  # Counter for keeping track of backtracking
+        self.colour_map = colors.ListedColormap(['yellow', 'green'])  # default colourscheme for grid
 
     # Helper function: Finds a named column's index
     # Starts at the master node
@@ -138,15 +141,15 @@ class CircularList:
             if i < n:
                 current_column.name = "Row {0}".format(i + 1)
             # Files
-            elif i < 2*n:
+            elif i < 2 * n:
                 current_column.name = "File {0}".format(int((i % n) + 1))
             # Diagonals
-            elif i < (4*n - 3):
-                current_column.name = "Diagonal {0}".format(int((i % (2*n)) + 1))
+            elif i < (4 * n - 3):
+                current_column.name = "Diagonal {0}".format(int((i % (2 * n)) + 1))
                 current_column.primary = False
             # Back Diagonals
             else:
-                current_column.name = "Back Diagonal {0}".format(int((i % (4*n - 3)) + 1))
+                current_column.name = "Back Diagonal {0}".format(int((i % (4 * n - 3)) + 1))
                 current_column.primary = False
         self.file_write_n_queen(n)  # Write the according introduction to the main output file
         self.create_original_header_list()
@@ -171,9 +174,9 @@ class CircularList:
     # Arguments: None
     # Return: None
     def print(self):
-        current_header = self.master_node.right
+        # current_header = self.master_node.right
         while current_header != self.master_node:
-            print(current_header.name, current_header.size)
+            # print(current_header.name, current_header.size)
             current_header = current_header.right
         return None
 
@@ -182,11 +185,11 @@ class CircularList:
     # Arguments: None
     # Return: None
     def print_solution(self):
-        print("Solution")
+        # print("Solution")
         for i in range(len(self.solution_list)):
             print(self.solution_list[i].column.name, self.solution_list[i].right.column.name)
         # Room for improvement here with a 'furthest left' function
-        print("End Solution")
+        # print("End Solution")
         return None
 
     # Core function: Begins the main output file, also writing a small introduction
@@ -245,7 +248,7 @@ class CircularList:
         for i in range(len(self.solution_list)):
             # Furthest left nonsense is a relic of a failed optimization
             furthest_left = self.find_furthest_left(self.solution_list[i])
-            #furthest_left = self.solution_list[i]
+            # furthest_left = self.solution_list[i]
             # Write the node in the solution, as well as the node to the right of it
             file.write(furthest_left.column.name)
             file.write(", ")
@@ -282,7 +285,7 @@ class CircularList:
             if name == self.header_list[i]:
                 return index
             index = index + 1
-        print("DEBUG: No matching name found in the original column header list.")
+        #print("DEBUG: No matching name found in the original column header list.")
         return None
 
     # Helper function: Initialises the header list, used to ensure the order in which nodes in the solution are written
@@ -303,18 +306,17 @@ class CircularList:
     def find_furthest_left(self, current_node):
         dummy_node = current_node.left
         best_node = current_node
-        print("current node", current_node)
+        # print("current node", current_node)
         best_index = self.find_original_index_by_name(current_node.column.name)
-        print("best index", best_index)
+        # print("best index", best_index)
         while dummy_node != current_node:
             dummy_index = self.find_original_index_by_name(dummy_node.column.name)
-            print("dummy", dummy_index)
+            # print("dummy", dummy_index)
             if dummy_index < best_index:
                 best_node = dummy_node
                 best_index = dummy_index
             dummy_node = dummy_node.left
         return best_node
-
 
     # Core function: Write a single iteration of DLX to the log
     # This write will include the depth of the algorithm as well as the row it has chosen to try.
@@ -324,10 +326,10 @@ class CircularList:
     # backtrack[boolean] = whether or not to record a backtrack in the log, default = False
     # Return: None
     def log_row_board(self, node, k=0, backtrack=False):
-        self.current_move = [] # list of current moves, namely row = X and file = Y
+        self.current_move = []  # list of current moves, namely row = X and file = Y
         log_file = open("log_output2.txt", "a")
         if backtrack:
-            self.backtrack_counter+= 1 # counter that tells us to delete some previous nodes
+            self.backtrack_counter += 1  # counter that tells us to delete some previous nodes
             log_file.write("Problem encountered,\t")
             log_file.write(node.name)
             log_file.write("\tis a dead constraint. BACKTRACK.\n")
@@ -347,46 +349,34 @@ class CircularList:
                 dummy_node = dummy_node.right
             log_file.write("\n")
         log_file.close()
-        self.move_set.append(self.current_move) # add current move to move set list
-        df = pd.DataFrame(self.move_set) # convert move set list to pandas dataframe
-        df[0] = df[0].str.replace("Row ", "") # remove strings
-        df[1] = df[1].str.replace("File ", "")
-        df.dropna(inplace=True) # remove NaN data that appears due to how backtracking is handled
-        print(df)
-        print("Row to clear:", df[0].iloc[-1]) #debug
-        print(self.backtrack_counter)
+        self.move_set.append(self.current_move)  # add current move to move set list
+        moves_df = pd.DataFrame(self.move_set)  # convert move set list to pandas dataframe
+        moves_df[0] = moves_df[0].str.replace("Row ", "")  # remove strings
+        moves_df[1] = moves_df[1].str.replace("File ", "")
+        moves_df.dropna(inplace=True)  # remove NaN data that appears due to how backtracking is handled
+        New_move = int(moves_df[0].iloc[-1])  # new move's row
         if self.backtrack_counter == 1:
-            self.backtrack_counter+=1
-            self.colour_map = colors.ListedColormap(['white', 'red']) # use the red backtrack board on grid
-        elif self.backtrack_counter== 2: # backtrack before new move is added
+            self.backtrack_counter += 1
+            self.colour2 = 'red'  # use the red backtrack board on grid
+        elif self.backtrack_counter == 2:  # backtrack before new move is added
             self.backtrack_counter -= 2
-            print("Test", int(df[0].iloc[-1]))
             for i in range(N):
-                for j in range(int(df[0].iloc[-1])-1,N):
-                    self.board[(j, i)] *= 0 # Delete all rows above new move to backtrack
-            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1 # Add new move to the 4X4 matrix
-            self.colour_map = colors.ListedColormap(['white', 'blue']) # new moves get blue colour scheme
-        else: # if no backtracking, add new move
-            self.board[(int(df[0].iloc[-1]) - 1), (int(df[1].iloc[-1]) - 1)] += 1 # if no backtracking,
-            self.colour_map = colors.ListedColormap(['white', 'blue'])
-        plt.close() #close previous board
-        plt.figure(figsize=(N, N))
-        plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
-        plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-        plt.draw()
-        plt.pause(0.2) # pause needed otherwise algorithm moves on too fast to see the board
-
-        print(self.board)
-        if self.board.sum() == N: # solution is found when there is N correct placements on the board
-            plt.close()
-            print("Solution Found!")
-            self.colour_map = colors.ListedColormap(['white', 'green']) # Green colour scheme for success!
-            plt.figure(figsize=(N, N))
-            plt.pcolor(self.board[::-1], cmap=self.colour_map, edgecolors='k', linewidths=3)
-            plt.tick_params(left=False, bottom=False, labelleft=False, labelbottom=False)
-            plt.draw()
-            plt.pause(1) # keep the board up for 1 second so we can see our solution!
-            self.board = self.board*0 # resets the board
+                for j in range(New_move - 1, N):
+                    self.board[(j, i)] *= 0  # Delete all rows below the new move to backtrack
+            self.board[
+                (int(moves_df[0].iloc[-1]) - 1), (int(moves_df[1].iloc[-1]) - 1)] += 1  # Add new move to the 4X4 matrix
+            self.colour2 = "blue"  # new moves get blue colour scheme
+        else:  # if no backtracking, add new move
+            for i in range(N):
+                self.board[New_move - 1, i] = 0  # clear any other moves in row
+            self.board[(int(moves_df[0].iloc[-1]) - 1), (int(moves_df[1].iloc[-1]) - 1)] += 1  # if no backtracking,
+            self.colour2 = "blue"
+        chessboard_figure(N, self.colour2, 0.1, self.board)
+        if self.board.sum() == N:  # solution is found when there is N correct placements on the board
+            print("Solution", self.total_solutions + 1, "Found!")
+            chessboard_figure(N, "green", 1, self.board)  # Green colour scheme for success!
+            self.backtrack_counter = 2
+            self.move_set = []  # resets moves list
         return None
 
     # Core function: This very important function converts a 1-0 matrix into a general list object
@@ -578,7 +568,6 @@ class CircularList:
             current_column = self.find_best_column()
             # Best column now found
             print("Best column found, ", current_column.name)  # DEBUG
-
             # Branch now for each row in this column
             current_node = current_column.down  # Start below the column header, iterate down from here
             self.cover_column(current_column)  # First cover this column
@@ -595,7 +584,7 @@ class CircularList:
                     current_right = current_right.right  # step right
                 # print("Recursive call")  # DEBUG
                 # Call dlx again, with depth += 1
-                self.dlx(k+1)
+                self.dlx(k + 1)
                 current_node = self.solution_list[k]  # Retrieve the current node from the solution list
                 current_column = current_node.column  # Find its column
                 # Iterate left to uncover
@@ -610,16 +599,38 @@ class CircularList:
 
 
 N = 8
+
+
+def chessboard_figure(N, colour2, pause_length, board):
+    numbers = py.array(py.arange(N))  # make an array of [1,2...N] numbers
+    fig1 = plt.figure(num="Chessboard", figsize=(N, N))  # used to make sure plots stays in the same window
+    ax = fig1.add_subplot(111)
+    colour_map = colors.ListedColormap(['white', colour2])  # colours of the board
+    plt.pcolor(board[::-1], cmap=colour_map, edgecolors='k', linewidths=3)
+    ax.set_xticklabels(numbers + 1)
+    ax.set_yticklabels(py.flip(numbers + 1))
+    ax.tick_params(axis=u'both', which=u'both', length=0)  # hide black tick lines
+    plt.ylabel('Rank', fontsize=15)
+    plt.xlabel('File', fontsize=15)
+    plt.xticks(numbers + 0.5)  # ticks between boxes in grid
+    plt.yticks(numbers + 0.5)
+    fig1.canvas.draw_idle()
+    plt.pause(pause_length)  # pause so we can see the move
+    plt.cla()  # clears axis labels when finished.
+
+
+chessboard_figure(N, "blue", 3, py.zeros((N, N)))
+
 print("N = ", N)
 print("Creating empty 1-0 Matrix...")
 current_matrix = create_one_zero_matrix(N)
 print("Done.")
-#print(current_matrix)
+# print(current_matrix)
 print("Populating 1-0 Matrix...")
 populate_one_zero_matrix(current_matrix, N)
 print("Done.")
-#print(py.shape(current_matrix))
-#print(current_matrix)
+# print(py.shape(current_matrix))
+# print(current_matrix)
 
 # TESTS
 test = CircularList()
@@ -628,17 +639,16 @@ test.transform_n_queen(N)
 this_node = test.master_node.right
 while this_node != test.master_node:
     below = this_node.down
-    #print(this_node.name)
+    # print(this_node.name)
     while below != this_node:
         counter = 0
         right = below.right
         while right != below:
             counter = counter + 1
             right = right.right
-        #print(below, "Counter:", counter)
+        # print(below, "Counter:", counter)
         below = below.down
     this_node = this_node.right
 
 # PRAY
 test.dlx(0)
-print("--- %s seconds ---" % (time.time() - start_time))
