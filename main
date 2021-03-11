@@ -2,7 +2,7 @@ import numpy as py
 import time
 import os
 import math
-start_time = time.time()
+
 
 # Specific NQueens function: Creates an empty matrix of size n^2 by 2(3n-3),
 # to hold all possible placements and constraints
@@ -48,6 +48,54 @@ def populate_one_zero_matrix(one_zero_matrix, n):
             one_zero_matrix[counter] = current_row
             counter = counter + 1
     return one_zero_matrix
+
+
+def main():
+    print("Welcome to DLX\n",
+          "This algorithm solves an exact cover problem of your choice.\n",
+          "The solutions will be written to the file: 'main_output.txt'.\n"
+          "Please ensure you have no file matching this name in your current repository, as it will be overwritten.\n")
+    print("Please input the letter of your choice: 'A' or 'B'\n",
+          "A.) Solve the N-Queens problem\n",
+          "B.) Import your favourite matrix to solve (you will need the path/filename of this matrix)")
+    choice = input("Answer: ").upper()
+    if choice == 'A':
+        print("You have chosen: \nOption A: to solve the N Queens problem.\n Please now specify N.")
+        n = int(input("N = "))
+        log_decision = 'Z'
+        while log_decision != 'Y' and log_decision != 'N':
+            print("Would you like an extensive log of all steps taken? (Will increase execution time of DLX)\n",
+                  "Please answer: (Y/N)")
+            log_decision = input().upper()
+        begin_dlx_n_queen(n, log_decision)
+        return None
+    elif choice == 'B':
+        print("You have chosen: \nOption B: to solve your favourite matrix.")
+        delimiter_type = 'Z'
+        while delimiter_type != 'A' and delimiter_type != 'B':
+            print("Please now specify if the values in your file are separated by:\nA.) commas \nB.) whitespace")
+            delimiter_type = input("Answer: ").upper()
+        print("Please now input the filename with path, including the extension, that holds the your favourite matrix.",
+              "\nFor example: user/project/dlx/input.csv")
+        print("If the file is in the same directory as I am, no need to input the path.")
+        filename = input("Filename: ")
+        try:
+            if delimiter_type == 'A':
+                input_matrix = py.loadtxt(filename, dtype = int, delimiter=',')
+                print(input_matrix)
+            elif delimiter_type == 'B':
+                input_matrix = py.loadtxt(filename, dtype=int)
+                print(input_matrix)
+            log_decision = 'Z'
+            while log_decision != 'Y' and log_decision != 'N':
+                print("Would you like an extensive log of all steps taken? (Will increase execution time of DLX)\n",
+                      "Please answer: (Y/N)")
+                log_decision = input().upper()
+            begin_dlx_user_input_matrix(input_matrix, log_decision)
+        except:
+            print("Error could not open file, please try again")
+            return None
+        return None
 
 
 # Class declaration for the column headers
@@ -493,12 +541,13 @@ class CircularList:
     # is dead. In this case a backtrack is necessary.
     # Arguments: None
     # Return: None
-    def dead_constraint(self):
+    def dead_constraint(self, log):
         current_header = self.master_node.right
         while current_header != self.master_node:
             # We do not care is non-primary constraints are dead
             if current_header.primary and current_header.size <= 0:
-                self.file_write_log_row(current_header, backtrack=True)  # Log this backtrack
+                if log:
+                    self.file_write_log_row(current_header, backtrack=True)  # Log this backtrack
                 return True
             current_header = current_header.right
         return False
@@ -508,7 +557,7 @@ class CircularList:
     # This is a recursive function, see report for more details
     # Arguments: k = depth of the algorithm
     # Return: None
-    def dlx(self, k):
+    def dlx(self, k, log=True):
         print("Starting algorithm DLX. k=", k)  # DEBUG
         # self.print()  # DEBUG
         # self.print_solution()  # DEBUG
@@ -518,12 +567,13 @@ class CircularList:
             self.print_solution()  # DEBUG
             # Write this solution to both output files
             self.file_write_solution("main_output.txt")
-            self.file_write_solution("log_output.txt")
+            if log:
+                self.file_write_solution("log_output.txt")
             # Return now
             return None
         else:
             # Check to see if there are any dead constraints
-            if self.dead_constraint():
+            if self.dead_constraint(log):
                 print("Dead constraint, need to backtrack")  # DEBUG
                 # Return as the problem is not well defined anymore
                 return None
@@ -531,7 +581,6 @@ class CircularList:
             current_column = self.find_best_column()
             # Best column now found
             print("Best column found, ", current_column.name)  # DEBUG
-
             # Branch now for each row in this column
             current_node = current_column.down  # Start below the column header, iterate down from here
             self.cover_column(current_column)  # First cover this column
@@ -539,7 +588,8 @@ class CircularList:
                 self.set_solution_k(current_node, k)  # Add this to the solution list, will be overwritten if not a
                 # solution.
                 # Record this step of the algorithm in the log
-                self.file_write_log_row(current_node, k, backtrack=False)
+                if log:
+                    self.file_write_log_row(current_node, k, backtrack=False)
                 # Iterate across this row
                 current_right = current_node.right
                 while current_right != current_node:
@@ -548,7 +598,7 @@ class CircularList:
                     current_right = current_right.right  # step right
                 # print("Recursive call")  # DEBUG
                 # Call dlx again, with depth += 1
-                self.dlx(k+1)
+                self.dlx(k+1, log)
                 current_node = self.solution_list[k]  # Retrieve the current node from the solution list
                 current_column = current_node.column  # Find its column
                 # Iterate left to uncover
@@ -562,36 +612,67 @@ class CircularList:
         return None
 
 
-N = 8
-print("N = ", N)
-print("Creating empty 1-0 Matrix...")
-current_matrix = create_one_zero_matrix(N)
-print("Done.")
-print(current_matrix)
-print("Populating 1-0 Matrix...")
-populate_one_zero_matrix(current_matrix, N)
-print("Done.")
-print(py.shape(current_matrix))
-print(current_matrix)
+def begin_dlx_n_queen(n, log_decision='Y'):
+    start_time = time.time()
+    print("Solving N Queens problem, for N = ", n)
+    print("Creating empty 1-0 Matrix...")
+    one_zero_matrix = create_one_zero_matrix(n)
+    print("Done.")
+    print("Populating 1-0 Matrix...")
+    populate_one_zero_matrix(one_zero_matrix , n)
+    print("Done.")
+    print("Solving now for:\n", one_zero_matrix)
+    overall_list = CircularList()
+    overall_list.convert_one_zero(one_zero_matrix)
+    overall_list.transform_n_queen(n)
+    master_node = overall_list.master_node
+    test_circular_list(master_node)
+    if log_decision == 'N':
+        overall_list.dlx(0, False)
+    else:
+        overall_list.dlx(0)
+    print("Algorithm DLX finished, execution time:")
+    if overall_list.total_solutions == 0:
+        print("It appears no solutions were found for your matrix, the problem may not be well defined")
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("Output can now be seen in 'main_output.txt'")
+    return None
 
-# TESTS
-test = CircularList()
-test.convert_one_zero(current_matrix)
-test.transform_n_queen(N)
-this_node = test.master_node.right
-while this_node != test.master_node:
-    below = this_node.down
-    print(this_node.name)
-    while below != this_node:
-        counter = 0
-        right = below.right
-        while right != below:
-            counter = counter + 1
-            right = right.right
-        print(below, "Counter:", counter)
-        below = below.down
-    this_node = this_node.right
 
-# PRAY
-test.dlx(0)
-print("--- %s seconds ---" % (time.time() - start_time))
+def begin_dlx_user_input_matrix(user_input_matrix, log_decision='Y'):
+    start_time = time.time()
+    print("Now solving your favourite matrix:\n", user_input_matrix)
+    overall_list = CircularList()
+    overall_list.convert_one_zero(user_input_matrix)
+    master_node = overall_list.master_node
+    test_circular_list(master_node)
+    if log_decision == 'N':
+        overall_list.dlx(0, False)
+    else:
+        overall_list.dlx(0)
+    print("Algorithm DLX finished, execution time:")
+    if overall_list.total_solutions == 0:
+        print("It appears no solutions were found for your matrix, the problem may not be well defined")
+    print("--- %s seconds ---" % (time.time() - start_time))
+    print("Output can now be seen in 'main_output.txt'")
+    return None
+
+
+def test_circular_list(master_node):
+    test_right = master_node.right
+    while test_right != master_node:
+        test_below = test_right.down
+        print(test_right.name)
+        while test_below != test_right:
+            counter = 0
+            row_right = test_below.right
+            while row_right != test_below:
+                counter = counter + 1
+                row_right = row_right.right
+            print(test_below, "Counter:", counter)
+            test_below = test_below.down
+        test_right = test_right.right
+    return None
+
+
+main()
