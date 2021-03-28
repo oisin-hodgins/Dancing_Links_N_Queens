@@ -126,12 +126,10 @@ class Node:
 # Class declaration for the overall list object.
 # The master node/column header is specified initially,
 # As well as the solution list and the total number of solutions
-class CircularList:
+class FourWayLinkedList:
     def __init__(self, master_node=Column()):
         self.master_node = master_node      # Create a column header to be the master node
         master_node.name = "Master"         # Set this header's name
-        master_node.size = 10000000000000   # Set the master node's size to be very large,
-        # so that it is never chosen to be part of the solution
         master_node.primary = False         # If this is a general application of DLX, this condition is needed for
         # solutions to be found. See self.dlx for details
         self.solution_list = []             # Used to store the nodes in the solution
@@ -390,7 +388,7 @@ class CircularList:
         log_file.close()
         return None
 
-    # Core function: This very important function converts a 1-0 matrix into a general list object
+    # Core function: This very important function converts a exact cover matrix into a general list object
     # No checks are performed to see if the problem is well defined
     # The column headers are given default names in the format: "constraint {i}" from 0, number of constraints
     # This function has three sections:
@@ -400,12 +398,11 @@ class CircularList:
     # Arguments: matrix = the 1-0 matrix to be converted
     # Return: master_node = the master node of the list object, so its pointer can be stored elsewhere outside
     # these methods
-    def convert_one_zero(self, matrix):
+    def convert_exact_cover(self, matrix):
         self.file_write_one_zero(matrix)  # First record the matrix in the main output file
         dims = py.shape(matrix)  # Find the dimensions of the matrix
         x = dims[0]  # Number of rows
         y = dims[1]  # Number of columns
-
         # Create the column headers
         previous_header = self.master_node
         for i in range(y):
@@ -414,64 +411,49 @@ class CircularList:
             # Connect to the previous header on the left
             new.left = previous_header
             previous_header.right = new
+            new.up = new
+            new.down = new
             # Connect on the right to the master node.
             # Note: These next two will be overwritten for each iteration i, except the last
             new.right = self.master_node
             self.master_node.left = new
             # Update pointer for next iteration
             previous_header = new
-
         # Create each row
         for i in range(x):
             # Extract corresponding row from 1-0 Matrix
             current_row = matrix[i]
             first_pass = True  # Bad practice, can't think of a better solution right now. Need to operate differently
             # if this is the first node in the row.
-
             # Iterate over the extracted row
-            for j in range(y):
-                # If significant, we only record 1s from the 1-0 matrix of course
+            for j in range(len(current_row)):
+                # If significant, as we only record 1s from the 1-0 matrix
                 if current_row[j] == 1:
                     new = Node()  # Create new node
                     new.column = self.find_column_by_index(j + 1)  # Define column header for new node
+                    new.column.size = new.column.size + 1
                     current_above = new.column
                     # Find 'lowest' node in the column
-                    while current_above.down is not None:
+                    while current_above.down != new.column:
                         current_above = current_above.down
                     # Connect new.up to current_above.down
                     current_above.down = new
                     new.up = current_above
+                    new.down = new.column
+                    new.column.up = new
                     # If this is the first node, no previous node declared and no left connection available
                     if first_pass:
-                        first_node = new
-                        first_node.left = first_node
-                        first_node.right = first_node
-                        prev_node = first_node  # Record this node for the next iteration
+                        new.left = new
+                        new.right = new
+                        prev_node = new
                         first_pass = False
                     else:
                         # Connect new node on the left to the previous node in this row
+                        prev_node.right.left = new
                         new.left = prev_node
+                        new.right = prev_node.right
                         prev_node.right = new
-                        new.right = first_node
-                        first_node.left = new
                         prev_node = new
-        # Finally join the edges of the lists
-        # Start at the master node
-        current_header = self.master_node.right  # Current header will be used to traverse the chain horizontally
-        # Iterate right until we are at the last node
-        while current_header != self.master_node:
-            current_node = current_header  # Current node will be used to traverse the chain vertically
-            # Iterate down until we are at the 'lowest' node
-            while current_node.down is not None:
-                current_header.size = current_header.size + 1  # Update the size of this column for each step down
-                current_node = current_node.down  # Step down
-            # Join the 'lowest' node and the header, above and below
-            current_node.down = current_header
-            current_header.up = current_node
-            current_header = current_header.right  # Step right
-        self.create_original_header_list()  # This function is called now that the list object has no 'loose' edges
-        # It is needed to facilitate the logging of solutions
-        print(self.header_list)
         return self.master_node
 
     # DLX helper function: Cover a column of the list object
@@ -529,7 +511,7 @@ class CircularList:
     # Return: None
     def find_best_column(self):
         current_header = self.master_node.right
-        best_header = self.master_node
+        best_header = current_header
         while current_header != self.master_node:
             # We only want to choose primary headers, there should only be non-primary headers in the NQueen application
             if current_header.size < best_header.size and current_header.primary:
@@ -561,7 +543,7 @@ class CircularList:
         print("Starting algorithm DLX. k=", k)  # DEBUG
         # self.print()  # DEBUG
         # self.print_solution()  # DEBUG
-        # If the only constraints left are non-primary ones, we have found a solution!
+        # If the only constraints remaining are non-primary ones, we have found a solution!
         if not self.master_node.right.primary:
             print("O frabjous day! Callooh! Callay!")  # DEBUG
             self.print_solution()  # DEBUG
@@ -622,8 +604,8 @@ def begin_dlx_n_queen(n, log_decision='Y'):
     populate_one_zero_matrix(one_zero_matrix , n)
     print("Done.")
     print("Solving now for:\n", one_zero_matrix)
-    overall_list = CircularList()
-    overall_list.convert_one_zero(one_zero_matrix)
+    overall_list = FourWayLinkedList()
+    overall_list.convert_exact_cover(one_zero_matrix)
     overall_list.transform_n_queen(n)
     master_node = overall_list.master_node
     test_circular_list(master_node)
@@ -642,8 +624,8 @@ def begin_dlx_n_queen(n, log_decision='Y'):
 def begin_dlx_user_input_matrix(user_input_matrix, log_decision='Y'):
     start_time = time.time()
     print("Now solving your favourite matrix:\n", user_input_matrix)
-    overall_list = CircularList()
-    overall_list.convert_one_zero(user_input_matrix)
+    overall_list = FourWayLinkedList()
+    overall_list.convert_exact_cover(user_input_matrix)
     master_node = overall_list.master_node
     test_circular_list(master_node)
     if log_decision == 'N':
