@@ -96,28 +96,28 @@ def populate_one_zero_matrix(one_zero_matrix, n):
             counter = counter + 1
     return one_zero_matrix
 
-# Class declaration for the column headers
-# No initial specification of the attributes
-class Column:
-    def __init__(self):
-        self.left = None        # Points to the node/column header to the left of this header
-        self.right = None       # Points to the node/column header to the right of this header
-        self.up = None          # Points to the node above this header
-        self.down = None        # Points to the node below this header
-        self.size = 0           # Refers to the number of nodes below this object/ in it's column
-        self.name = None        # Cosmetic attribute for outputting solutions
-        self.primary = True     # Specific attribute for NQueens, see report for more details
-
-
 # Class declaration for the regular nodes.
-# No initial specification of the attributes
+# All attributes initialised to 'None' by default
 class Node:
-    def __init__(self):
-        self.left = None        # Points to the node to the left
-        self.right = None       # Points to the node to the right
-        self.up = None          # Points to the node/column header above
-        self.down = None        # Points to the node/column header below
-        self.column = None      # Points to the column header above, regardless of how many nodes are above
+    def __init__(self, left=None, right=None, up=None, down=None, column=None):
+        self.left = left        # Points to the (node/column header) to the left of this object
+        self.right = right      # Points to the (node/column header) to the right of this object
+        self.up = up            # Points to the (node/column header) above this object
+        self.down = down        # Points to the (node/column header) below this object
+        self.column = column    # Points to the column header of the column this object belongs to
+
+
+# Class declaration for the column headers
+# All attributes initialised to 'None' or '0' by default, except primary attribute set to 'True'
+class Column:
+    def __init__(self, left=None, right=None, up=None, down=None, size=0, name=None, primary=True):
+        self.left = left        # Points to the (node/column header) to the left of this object
+        self.right = right      # Points to the (node/column header) to the right of this object
+        self.up = up            # Points to the (node/column header) above this object
+        self.down = down        # Points to the (node/column header) below this object
+        self.size = size        # Refers to the number of nodes in this object's column (below)
+        self.name = name        # Cosmetic attribute for outputting solutions
+        self.primary = primary  # If set to 'False' object cannot be chosen by DLX and can be unsatisfied for solutions
 
 
 # Class declaration for the overall list object.
@@ -125,14 +125,12 @@ class Node:
 # The solution_list/total_solutions variables are initialised.
 # The main and log file names are stored as attributes of this object.
 class FourWayLinkedList:
-    def __init__(self, main_file_name="main_output.txt", log_file_name="log.txt", master_node=Column()):
+    def __init__(self, main_file_name="main_output.txt", log_file_name="log.txt", master_node=Column(name="Master",primary=False)):
+        self.main_file = main_file_name     # Store name of MAIN file for access later
+        self.log_file = log_file_name       # Store name of LOG file for access later
         self.master_node = master_node      # Create a column header to be the master node
-        master_node.name = "Master"         # Set this header's name
-        master_node.primary = False         # Ensures DLX never chooses this as a column
         self.solution_list = []             # Used to store the nodes in the solution
         self.total_solutions = 0            # Used to count the number of solutions, for labelling their output later
-        self.main_file = main_file_name
-        self.log_file = log_file_name
         self.header_list = []               # Stores the original order of header names, for outputting solutions
 
     # Helper function: Finds a named column's index
@@ -289,9 +287,9 @@ class FourWayLinkedList:
         log_file = open(self.log_file, "a")
         # If the algorithm is in a 'dead-end' record a backtrack in the log
         if backtrack:
-            log_file.write("Problem encountered,\t")
+            log_file.write("BACKTRACK necessary,\t")
             log_file.write(node.name)
-            log_file.write("\tis a dead constraint. BACKTRACK.\n")
+            log_file.write("\tis a dead constraint.\n")
         # Otherwise write this row into the solution
         else:
             current_node = self.find_furthest_left(node)
@@ -371,17 +369,14 @@ class FourWayLinkedList:
     # Arguments: current_node = a node in the row to be searched
     # Return: best_node = the furthest left node
     def find_furthest_left(self, current_node):
-        dummy_node = current_node.left
-        best_node = current_node
-        #print("current node", current_node)
+        dummy_node, best_node = current_node.left, current_node
+        #best_node = current_node
         best_index = self.find_original_index_by_name(current_node.column.name)
-        #print("best index", best_index)
         while dummy_node != current_node:
             dummy_index = self.find_original_index_by_name(dummy_node.column.name)
-            #print("dummy", dummy_index)
             if dummy_index < best_index:
-                best_node = dummy_node
-                best_index = dummy_index
+                best_node, best_index = dummy_node, dummy_index
+                #best_index = dummy_index
             dummy_node = dummy_node.left
         return best_node
 
@@ -400,102 +395,77 @@ class FourWayLinkedList:
         self.begin_file_writing(log)
         self.file_write_one_zero(matrix)  # First record the matrix in the main output file
         dims = np.shape(matrix)  # Find the dimensions of the matrix
-        x = dims[0]  # Number of rows
-        y = dims[1]  # Number of columns
+        x, y = dims  # Number of rows, number of columns
         # Create the column headers
         previous_header = self.master_node
         for i in range(y):
-            new = Column()  # Initialise new column header
-            new.name = "Constraint {0}".format(i)  # Generic name
-            # Connect to the previous header on the left
-            new.left = previous_header
+            new = Column(left=previous_header, right=self.master_node, name="Constraint {0}".format(i))  # Initialise new column header
+            new.up, new.down = new, new
             previous_header.right = new
-            new.up = new
-            new.down = new
-            # Connect on the right to the master node.
-            # Note: These next two will be overwritten for each iteration i, except the last
-            new.right = self.master_node
             self.master_node.left = new
-            # Update pointer for next iteration
-            previous_header = new
+            previous_header = new   # Update pointer for next iteration
         # Create each row
         for i in range(x):
-            # Extract corresponding row from 1-0 Matrix
-            current_row = matrix[i]
-            first_pass = True  # Bad practice, can't think of a better solution right now. Need to operate differently
-            # if this is the first node in the row.
+            current_row = matrix[i]     # Extract corresponding row from 1-0 Matrix
             # Iterate over the extracted row
+            prev_node = None
             for j in range(len(current_row)):
-                # If significant, as we only record 1s from the 1-0 matrix
-                if current_row[j] == 1:
-                    new = Node()  # Create new node
-                    new.column = self.find_column_by_index(j + 1)  # Define column header for new node
-                    new.column.size = new.column.size + 1
-                    current_above = new.column
-                    # Find 'lowest' node in the column
-                    while current_above.down != new.column:
+                current_node = Node()
+                current_node.left, current_node.right = current_node, current_node
+                if current_row[j] == 1:         # If significant, as we only record 1s from the 1-0 matrix
+                    if prev_node is not None:
+                        current_node.right, prev_node.right.left = prev_node.right, current_node
+                        current_node.left, prev_node.right = prev_node, current_node
+                    current_node.column = self.find_column_by_index(j + 1)          # Define column header for new node
+                    current_node.column.size = current_node.column.size + 1
+                    current_above = current_node.column
+                    while current_above.down != current_node.column:            # Find 'lowest' node in the column
                         current_above = current_above.down
-                    # Connect new.up to current_above.down
-                    current_above.down = new
-                    new.up = current_above
-                    new.down = new.column
-                    new.column.up = new
-                    # If this is the first node, no previous node declared and no left connection available
-                    if first_pass:
-                        new.left = new
-                        new.right = new
-                        prev_node = new
-                        first_pass = False
-                    else:
-                        # Connect new node on the left to the previous node in this row
-                        prev_node.right.left = new
-                        new.left = prev_node
-                        new.right = prev_node.right
-                        prev_node.right = new
-                        prev_node = new
+                    current_above.down, current_node.column.up = current_node, current_node
+                    current_node.up, current_node.down = current_above, current_node.column
+                    prev_node = current_node
         return self.master_node
 
     # DLX helper function: Cover a column of the list object
-    # This is a complete copy of Donald Knuth's implementation in his paper(I hope)
-    # Arguments: column = the column to be covered
+    # Implemented as directly as possible from Dancing Links paper by Knuth.
+    # Alters the links around a column header, and around the nodes in each row of a column such that they are removed
+    # from the list.
+    # Arguments: column = the column header of the column to be covered
     # Return: None
     def cover_column(self, column):
         # Remove column header from the header chain
         column.left.right = column.right  # Alter link to the left
         column.right.left = column.left  # Alter link to the right
         # Iterate down through the column
-        current_node = column.down
-        while current_node != column:
+        current_down = column.down
+        while current_down != column:
             # Iterate right across the row
-            current_right = current_node.right
-            while current_right != current_node:
-                current_below = current_right.down  # Need to specify a temporary pointer to the node below & below
-                current_above = current_right.up
-                current_below.up = current_above  # Alter link below
-                current_above.down = current_below  # Alter link above
+            current_right = current_down.right
+            while current_right != current_down:
+                current_right.down.up = current_right.up  # Alter link below
+                current_right.up.down = current_right.down  # Alter link above
                 current_right.column.size = current_right.column.size - 1  # Alter column size
                 current_right = current_right.right  # Step right
-            current_node = current_node.down  # Step down
+            current_down = current_down.down  # Step down
         return None
 
     # DLX helper function: Uncover a column of the list object
-    # This is a complete copy of Donald Knuth's implementation in his paper(I hope)
-    # This is the inverse of the cover_column function, all operations are reversed and done in the opposite order
-    # Arguments: column = the column to be uncovered
+    # Implemented as directly as possible from Dancing Links paper by Knuth.
+    # Alters the links around a covered column header, and around the nodes in each row of a column such that they are restored
+    # to the list.
+    # This is the inverse of the cover_column method, notice that all operations are reversed and done in the opposite order
+    # Arguments: column = the column header of the column to be uncovered
     # Return: None
     def uncover_column(self, column):
-        current_node = column.up
-        while current_node != column:
-            current_left = current_node.left
-            while current_left != current_node:
-                # print("Column", current_left.column.name, current_left.column.size)
+        current_up = column.up
+        while current_up != column:
+            current_left = current_up.left
+            while current_left != current_up:
                 current_left.column.size = current_left.column.size + 1
-                current_below = current_left.down
-                current_above = current_left.up
-                current_below.up = current_left  # Restore link below
-                current_above.down = current_left  # Restore link above
+                current_left.down.up = current_left  # Restore link below
+                current_left.up.down = current_left  # Restore link above
                 current_left = current_left.left  # Step left
-            current_node = current_node.up  # Step up
+            current_up = current_up.up  # Step up
         # Add column to the header chain
         column.left.right = column
         column.right.left = column
